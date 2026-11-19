@@ -1,0 +1,15 @@
+{
+  "title": "新片创作入口",
+  "demo": "custom",
+  "draft": true,
+  "duration": 20,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 108,
+  "seed": 42,
+  "loop": false,
+  "audio": {"integratedLufs": -16, "truePeakDb": -1.5},
+  "scenes": [{"id": "custom", "from": 0, "to": 20, "purpose": "根据本次 brief 重写内容和场景区间"}],
+  "cues": []
+}

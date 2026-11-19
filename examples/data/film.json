@@ -1,0 +1,89 @@
+{
+  "title": "澄屿书店的到店人数",
+  "demo": "custom",
+  "draft": false,
+  "duration": 30,
+  "fps": 24,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 108,
+  "seed": 42,
+  "loop": false,
+  "audio": {
+    "mode": "silent"
+  },
+  "scenes": [
+    {
+      "id": "data-1",
+      "from": 0,
+      "to": 3.4,
+      "purpose": "建立月份与读取单位"
+    },
+    {
+      "id": "data-2",
+      "from": 3.4,
+      "to": 8.3,
+      "purpose": "一月建立基准"
+    },
+    {
+      "id": "data-3",
+      "from": 8.3,
+      "to": 12.7,
+      "purpose": "二月上升"
+    },
+    {
+      "id": "data-4",
+      "from": 12.7,
+      "to": 18.0,
+      "purpose": "三月回落"
+    },
+    {
+      "id": "data-5",
+      "from": 18.0,
+      "to": 24.5,
+      "purpose": "四月到达两倍"
+    },
+    {
+      "id": "data-6",
+      "from": 24.5,
+      "to": 30,
+      "purpose": "保留最终图与来源"
+    }
+  ],
+  "cues": [],
+  "case": "data",
+  "dataset": {
+    "title": "到店人数",
+    "unit": "人",
+    "source": "虚构示例数据",
+    "asOf": "演示期间 1–4 月",
+    "illustrative": true,
+    "kind": "line",
+    "domain": [
+      0,
+      2400
+    ],
+    "rows": [
+      {
+        "label": "1月",
+        "value": 1200
+      },
+      {
+        "label": "2月",
+        "value": 1800
+      },
+      {
+        "label": "3月",
+        "value": 1500
+      },
+      {
+        "label": "4月",
+        "value": 2400
+      }
+    ]
+  },
+  "layers": {
+    "bookshop": "./assets/bookshop.jpg",
+    "grain": "./assets/grain.png"
+  }
+}

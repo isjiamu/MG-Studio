@@ -1,0 +1,58 @@
+{
+  "title": "一封信过海",
+  "demo": "custom",
+  "draft": false,
+  "duration": 30,
+  "fps": 24,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 108,
+  "seed": 42,
+  "loop": false,
+  "audio": {
+    "mode": "silent"
+  },
+  "scenes": [
+    {
+      "id": "paper-1",
+      "from": 0,
+      "to": 4.55,
+      "purpose": "海岸的信与远处小灯塔"
+    },
+    {
+      "id": "paper-2",
+      "from": 4.55,
+      "to": 8.25,
+      "purpose": "保持信的轮廓锚点折成纸船"
+    },
+    {
+      "id": "paper-3",
+      "from": 8.25,
+      "to": 16.3,
+      "purpose": "纸船在前后海浪间经过"
+    },
+    {
+      "id": "paper-4",
+      "from": 16.3,
+      "to": 23.1,
+      "purpose": "向灯塔行进并减速靠岸"
+    },
+    {
+      "id": "paper-5",
+      "from": 23.1,
+      "to": 30,
+      "purpose": "等待一拍，灯塔亮起"
+    }
+  ],
+  "cues": [],
+  "case": "paper",
+  "layers": {
+    "sky": "./assets/sky.png",
+    "far": "./assets/far.png",
+    "middle": "./assets/middle.png",
+    "front": "./assets/front.png",
+    "rock": "./assets/rock.png",
+    "shore": "./assets/shore.png",
+    "grain": "./assets/grain.png"
+  }
+}

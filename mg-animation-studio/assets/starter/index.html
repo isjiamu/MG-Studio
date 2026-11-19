@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MG Studio · 作品预览</title>
+<style>
+@font-face{font-family:StudioSans;src:url('./assets/NotoSansSC.ttf') format('truetype');font-weight:100 900;font-display:block}
+*{box-sizing:border-box}body{margin:0;background:#141821;color:#fff;font:14px system-ui}
+main{min-height:100vh;display:grid;place-content:center;gap:18px;padding:28px}
+canvas{display:block;max-width:92vw;max-height:80vh;width:auto;height:auto;box-shadow:0 16px 60px #0006}
+nav{display:flex;gap:16px;align-items:center}input{flex:1;accent-color:#b7ff6b}
+button{background:#b7ff6b;color:#132028;border:0;border-radius:24px;padding:10px 22px;cursor:pointer}
+body.render main{padding:0;display:block;min-height:0}body.render canvas{max-width:none;max-height:none;box-shadow:none}body.render nav{display:none}
+</style>
+<main><canvas id="stage"></canvas><nav><button id="play">播放</button><input id="time" aria-label="播放进度" type="range" min="0" step="0.01"><span id="readout"></span></nav></main>
+<script type="module">
+import {createFilm} from './src/film.js';
+const cfg=await fetch('./film.json').then(r=>r.json());
+const q=new URLSearchParams(location.search);
+const size=(q.get('size')||`${cfg.width}x${cfg.height}`).split('x').map(Number);
+const stage=document.querySelector('canvas');[stage.width,stage.height]=size;
+const render=q.has('render');if(render)document.body.classList.add('render');
+const fontSample='中文愿望光0123456789'+cfg.title;
+for(const weight of [400,500,600,700,800,900]){
+  const faces=await document.fonts.load(`${weight} 64px StudioSans`,fontSample);
+  if(!faces.some(f=>f.family.replace(/[\"']/g,'')==='StudioSans'&&f.status==='loaded'))throw Error(`StudioSans ${weight} missing; fallback is not accepted`);
+}
+await document.fonts.ready;
+const film=await createFilm(stage,cfg);
+window.MG={...cfg,width:size[0],height:size[1],seek:film.seek,inspect:film.inspect,trace:film.trace,layoutCoverage:film.layoutCoverage||(cfg.demo==='kinetic'?'manual-only':'instrumented text bounds only'),ready:true};
+film.seek(0);
+if(!render){
+  const slider=document.querySelector('#time'),btn=document.querySelector('#play'),readout=document.querySelector('#readout');
+  const silent=cfg.audio?.mode==='silent',audio=silent?null:new Audio('./out/score.wav');
+  if(audio)audio.loop=cfg.loop===true;
+  slider.max=cfg.duration-1/cfg.fps;let playing=false,pos=0,basePosition=0,startedAt=0;
+  const show=()=>{slider.value=pos;readout.textContent=`${pos.toFixed(2)} / ${cfg.duration}s${silent?' · 静音'+(cfg.loop?'循环':''):''}`;film.seek(pos);};
+  slider.oninput=()=>{pos=Number(slider.value);if(audio)audio.currentTime=pos;basePosition=pos;startedAt=performance.now();show();};
+  btn.onclick=async()=>{
+    if(playing){playing=false;audio?.pause();btn.textContent='播放';return;}
+    if(pos>=cfg.duration-1/cfg.fps)pos=0;
+    if(silent){basePosition=pos;startedAt=performance.now();playing=true;btn.textContent='暂停';}
+    else{audio.currentTime=pos;try{await audio.play();playing=true;btn.textContent='暂停';}catch(e){playing=false;readout.textContent=`音轨无法播放：${e.message}`;}}
+  };
+  if(audio)audio.onended=()=>{playing=false;pos=cfg.duration-1/cfg.fps;btn.textContent='重播';show();};
+  function live(){if(playing){
+    if(silent){const elapsed=basePosition+(performance.now()-startedAt)/1000;pos=cfg.loop?elapsed%cfg.duration:Math.min(elapsed,cfg.duration-1/cfg.fps);if(!cfg.loop&&elapsed>=cfg.duration){playing=false;btn.textContent='重播';}}
+    else pos=Math.min(audio.currentTime,cfg.duration-1/cfg.fps);
+    show();}requestAnimationFrame(live);}
+  show();requestAnimationFrame(live);
+}
+</script>
+</html>

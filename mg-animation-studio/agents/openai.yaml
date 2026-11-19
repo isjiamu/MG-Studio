@@ -1,0 +1,4 @@
+interface:
+  display_name: "MG 动画工作室"
+  short_description: "从一个想法制作产品、品牌、数据、架构、巨幕或手绘故事动画"
+  default_prompt: "用 $mg-animation-studio 制作一支有分层美术、逐步讲解和同步音轨的 MG 动画，实际渲染并交付视频与源文件。"

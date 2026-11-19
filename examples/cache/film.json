@@ -1,0 +1,52 @@
+{
+  "title": "为什么第二次加载更快？",
+  "demo": "custom",
+  "draft": false,
+  "duration": 30,
+  "fps": 24,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 108,
+  "seed": 42,
+  "loop": false,
+  "audio": {
+    "mode": "silent"
+  },
+  "scenes": [
+    {
+      "id": "cache-1",
+      "from": 0,
+      "to": 4.2,
+      "purpose": "确认是同一份内容"
+    },
+    {
+      "id": "cache-2",
+      "from": 4.2,
+      "to": 8.6,
+      "purpose": "查缓存，未中，转向源站"
+    },
+    {
+      "id": "cache-3",
+      "from": 8.6,
+      "to": 17.25,
+      "purpose": "取回写入副本，再返回"
+    },
+    {
+      "id": "cache-4",
+      "from": 17.25,
+      "to": 22.15,
+      "purpose": "重新请求，命中副本"
+    },
+    {
+      "id": "cache-5",
+      "from": 22.15,
+      "to": 30,
+      "purpose": "直接返回，总览两条路"
+    }
+  ],
+  "cues": [],
+  "case": "cache",
+  "layers": {
+    "grain": "./assets/grain.png"
+  }
+}

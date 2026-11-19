@@ -2,21 +2,63 @@
 
 # MG Studio · MG 动画制作 Skill
 
-**从一句想法、讲解稿或一组数据，做出可播放、可编辑的 MG 动画。**
+**从一句想法、讲解稿或一组数据，做出有导演质感、可编辑、可复现的 MG 动画。**
 
-分层美术 · 逐步讲解 · 旁白与动效同步 · 本地渲染 MP4
+宏观美学经验 · 审美与精确路由 · Canvas / DOM / Three.js WebGL · 声画同步 · 本地渲染 MP4
 
-**版本**　0.1　·　**作者**　甲木&阿水
+**版本**　0.2　·　**作者**　甲木&阿水
 
-[快速开始](#快速开始) · [制作流程](#制作流程) · [样式设定](#样式设定) · [国产模型实测](#国产模型实测) · [校验与交付](#校验与交付)
+[高水准范例](#高水准范例) · [快速开始](#快速开始) · [设计理念与路由](#设计理念与路由) · [制作流程](#制作流程) · [校验与交付](#校验与交付)
 
 </div>
 
-MG Studio 适合制作产品展示、数据播报、流程科普和纸艺短片。素材交代主体、场景和材质，代码负责排版、标注和关键动作。先把每个镜头的构图立住，再决定画面里什么该动、什么时候动。成片附可编辑工程，后续能继续改镜头、数据、画面文字与音轨。
+MG Studio 不把审美锁进固定模板，也不规定某个行业必须套用某种配色或版式。它用**路由**明确审美与精确的取舍，用**宏观创作心法**指导世界观、空间光影、排印、运动性格与声音编排，并开放 **Canvas 2D / DOM+SVG / GPU WebGL (Three.js)** 与定制声景工具链。新作品默认从空白入口起步；所有成片均交付可编辑工程与真实 MP4。
+
+## 高水准范例
+
+以下四支可运行范例覆盖 **4 种截然不同的视觉世界、题材类型与技术媒介**，均可通过 `init_project.py --demo <name>` 一键初始化完整可编辑工程并本地渲染。
+
+### 1. `atelier` · MATTER OF LIGHT — 3D 雕塑 × 编辑排印（28s · 60fps · GPU WebGL2）
+
+Three.js 实时 PBR 清漆/虹彩材质与自定义 GLSL 着色器（液态铬、黑钻、发光玻璃结、色散棱镜），夹在前后两层瑞士风格排印之间，配合 124 BPM 原创电子配乐与 35mm 微颗粒。
+
+![MATTER OF LIGHT 动图预览](demo/gifs/atelier.gif)
+
+[查看关键帧总览](demo/frames/atelier.jpg) · 复现：`python3 mg-animation-studio/scripts/init_project.py ./demo-atelier --demo atelier`
+
+---
+
+### 2. `industrial` · LESS, BUT BETTER — 纯 Canvas 2D 精密工业设计（22s · 60fps）
+
+零额外图像或 3D 依赖，纯 HTML5 Canvas 2D 绘制日光陶瓷白与拉丝阳极氧化铝质感、325 孔声学矩阵波纹、双旋钮示波器与 VU 表、欠阻尼机械卡位弹簧，以及声画咬合的物理 ASMR 声景。
+
+![LESS, BUT BETTER 动图预览](demo/gifs/industrial.gif)
+
+[查看关键帧总览](demo/frames/industrial.jpg) · 复现：`python3 mg-animation-studio/scripts/init_project.py ./demo-industrial --demo industrial`
+
+---
+
+### 3. `gta6` · GTA VI 阳光之下 — 60s 预告片级多图叙事与旁白混音（60s · 30fps）
+
+8 镜电影化节奏、多图分层裁切（`lib/layers.js`）、斜切转场、定时中文字幕、120 BPM 合成器浪潮配乐（`audio/compose.py`）与中文旁白自动压低（ducking）混音全链路示范。
+
+![GTA VI 阳光之下 动图预览](demo/gifs/gta6.gif)
+
+[查看关键帧总览](demo/frames/gta6.jpg) · 复现：`python3 mg-animation-studio/scripts/init_project.py ./demo-gta6 --demo gta6`
+
+---
+
+### 4. `anc` · 主动降噪原理演示 — 剖面素材 × 精确声学波形（15s · 30fps · DOM+SVG）
+
+工作室剖面渲染素材与代码精确驱动的同轴相消正弦波形融合，整机到内部麦克风、DSP、扬声器的连续推近拆解，兼具工业美学与物理清晰度。
+
+![主动降噪原理演示 动图预览](demo/gifs/anc.gif)
+
+[查看关键帧总览](demo/frames/anc.jpg) · 复现：`python3 mg-animation-studio/scripts/init_project.py ./demo-anc --demo anc`
 
 ## 快速开始
 
-**手动安装 Skill**
+**安装 Skill**
 
 ```bash
 git clone https://github.com/isjiamu/MG-Studio.git
@@ -25,91 +67,62 @@ mkdir -p ~/.codex/skills
 cp -R mg-animation-studio ~/.codex/skills/
 ```
 
-安装后，在支持 Agent Skills 的助手里点名 `$mg-animation-studio`。从一个明确的主题开始，把已有的文稿、数据、参考图或配音一并交给它。
+安装后，在支持 Agent Skills 的工具里调用 `$mg-animation-studio`（或直接指向 `mg-animation-studio/SKILL.md`）。
 
-> 用 $mg-animation-studio 做一条 30 秒、16:9 的缓存机制动画。用深色流程蓝图，按两次请求依次展示未命中、回源、回填和直接返回。每句普通话旁白对应一个动作，最后并列两条路径。导出 1080p MP4 和可编辑工程。
+> 用 $mg-animation-studio 把这个想法做成一支 25 秒、1080p 的 MG 动画。根据题材自己建立合适的视觉世界与最匹配的技术栈，先出全分辨率风格帧审片，再渲染带原创配乐的 MP4 与可编辑工程。
 
-本地渲染需要 Node.js 22+、Python 3、FFmpeg（含 `ffprobe`）和 Playwright Chromium。要先跑通已有工程，可按[示例复现指南](examples/README.md)操作。
+**运行任一内置范例**
+
+```bash
+# 查看全部范例
+python3 mg-animation-studio/scripts/init_project.py --list-demos
+
+# 初始化并渲染（以 industrial 为例；atelier 含 three 依赖请改用 npm install）
+python3 mg-animation-studio/scripts/init_project.py ./my-industrial --demo industrial
+cd ./my-industrial
+npm ci && npx playwright install chromium
+npm run score     # 有声范例生成配乐（anc 为静音可跳过）
+npm run verify    # 确定性时间轴校验
+npm run stills    # 生成关键帧与接触表
+npm run render && npm run check
+```
+
+本地渲染需要 Node.js 22+、Python 3（含 NumPy 时可运行 `atelier` / `industrial` / `gta6` 的定制声景脚本）、FFmpeg（含 `ffprobe`）和 Playwright Chromium。
+
+## 设计理念与路由
+
+- **不约束审美，传授宏观经验**：完整见 [宏观创作心法](mg-animation-studio/references/craft-philosophy.md)——先立题材的视觉世界与物质感，用注意力节奏、空间光影、排印造型、运动性格与声画同步把画面推到作品级完成度。
+- **审美与精确路由**：大多数时候二者并不冲突，路由只在真发生取舍时生效（详见 [路由指南](mg-animation-studio/references/routing.md)）：
+  - `aesthetic`（审美与感染力优先）：品牌片、发布会、设计宣言、预告与艺术表达。事实不编造，文案精炼，画面与情绪拥有最高空间。
+  - `balanced`（默认，审美与准确并重）：知识科普、产品拆解、财经解读、技术架构。数据与因果严格准确，同时把材质、空间和节奏做到高水准。
+  - `precise`（精确与读数优先）：教学图表、可测量数据播报、工程规范。刻度、基线与比例严格准确，在清晰结构内追求出版物级质感。
+- **开放技术栈**：默认 `capture:"canvas"` 支持纯 Canvas 2D 及内置 `lib/look.js` / `lib/camera.js`；设 `capture:"dom"` 可自由使用 HTML / SVG / CSS 滤镜混合；加 `"gpu": true` 可开启硬件 WebGL（如 Three.js PBR + GLSL 着色器）；`film.json.audio.script` 与 `audio.voice` 支持定制声景与旁白自动压低混音。
 
 ## 制作流程
 
-| 步骤 | 怎么做 | 产出 |
+| 步骤 | 做什么 | 产出 |
 | --- | --- | --- |
-| **1. 定任务** | 明确观众要看懂什么、在哪看、需要多长。核对数据和已有素材，确定画幅、声音和交片时的验收项。 | 简报 |
-| **2. 选样式** | 按题材选择一套视觉方向，确定背景、主体、重点色、文字和材质。也可以给参考图或指定品牌色。 | 样式设定 |
-| **3. 排分镜与旁白** | 按事件拆镜头。逐句标记旁白、主体动作、结果出现和停留时间。已有配音时，以实际音频时长排镜。 | 分镜与事件时间表 |
-| **4. 做素材与动效** | 用正式素材做主画面和关键中间态，检查构图、材质和遮挡。确定后再用 Canvas 合成和排布运动、文字及标注。 | 可编辑工程与关键帧 |
-| **5. 渲染与复查** | 检查跳转后的画面一致性、中文可读性和状态变化。导出后核对编码、时长与音轨，再结合成片复查节奏。 | 检查记录与成片 |
-| **6. 交付** | 附上 MP4、源工程、分镜、素材来源和复现命令。 | 可播放成片与可修改文件 |
+| **1. 简报与路由** | 明确核心信息、受众、表达重心路由，区分固定事实与自由创作区；探测本机可用媒介能力（GPU / 字体 / 素材 / 声音）。 | 简报与技术选型 |
+| **2. 分镜与风格帧** | 拆解镜头与时间节奏，先将 2–3 张代表画面（主视觉 + 最难中间态）直接做到成片质感并全分辨率审片。 | 分镜与风格帧 |
+| **3. 实现与声画同步** | 以确定性 `seek(t)` 驱动全部画面，同步编排原创配乐、定制声景脚本或旁白压低混音。 | 可编辑工程 |
+| **4. 视觉评审与校验** | 结合全分辨率审片与自动化检测（`verify` + `check`），打磨最影响整体观感的 1–3 处后交付。 | MP4、源工程与复现记录 |
 
-一条实用的分镜写法是「对象 → 动作 → 画面证据」。例如「缓存节点收到回源内容 → 写入副本 → 写入进度到达终点后，再画出返回用户的箭头」。旁白和画面共用这个事件顺序。
-
-### 设计与执行可以分开
-
-设计阶段先确定视觉规则、分镜、素材清单和验收标准。执行阶段按这套约定合成素材、渲染、跑自检，遇到问题就按时间码回到对应镜头修正。一个 Agent 可以完成全流程，也可以把简报、分镜和验收标准交给另一个具备文件和工具访问能力的 Agent 继续执行。
-
-完整规则见 [Skill 入口](mg-animation-studio/SKILL.md)与[分层美术与逐步讲解](mg-animation-studio/references/art-and-flow.md)。
-
-## 样式设定
-
-在提示词里直接写样式名称或参考图。让颜色有明确的角色，例如正文维持稳定对比度，强调色只跟随当前数值、节点或部件。确定风格后，把字重、光向、材质和转场方式记进分镜，方便跨镜头复用。
-
-### MG 动画常用样式
-
-| 样式 | 色彩与材质 | 动效配方 | 适合 |
-| --- | --- | --- | --- |
-| **编辑感数据** | 米白纸底 `#FAF4E8`，深绿 `#1C654F` 承担重点，砖红 `#AD533A` 标出回落 | 逐项揭示，保留已读数值，最后用基准线或差值收束 | 数据播报、运营复盘 |
-| **深色流程蓝图** | 深蓝底 `#122434`，暖橙 `#FAC487` 表示请求，青绿 `#8ADCD0` 表示返回 | 同一对象沿路径移动，逐个高亮节点，片尾复盘全路径 | 技术架构、机制科普 |
-| **暖光产品** | 深绿环境配暖金 `#FFDDA4`，用桌面光池和接触阴影交代材质 | 先交代全貌，用局部放大或引线跟随操作，保留部件的运动轴 | 产品特写、功能演示 |
-| **分层纸艺** | 暖白纸面 `#FFF0CE`、砖红 `#AC513E` 与独立前景，纸纹跟随裁片 | 保持剪纸的折痕与接点，用遮挡、翻折和视差推进叙事 | 剪纸故事、品牌短片 |
-
-**自定义样式**可以从一句描述开始，例如「暖白纸底、石墨色字、橙色只标当前部件。纸纹贴在部件上，进镜用短推近，结论留两秒」。给参考图时，也可以点明要沿用的是色彩、构图、材质还是动势。
-
-## 国产模型实测
-
-以下四支科普动画用国产模型按 MG Studio 的制作流程完成。每支约 20 秒，原片为 1920×1080，下方动图可循环观看。
-
-### 为什么我们总看到月球的同一面
-
-从肉眼看到的月亮切到地月示意图，用轨道、潮汐隆起和两条周期标尺表现自转逐步趋近公转。
-
-![地月轨道、潮汐隆起与自转公转周期的动画](demo/case-gifs/moon-tidal-locking.gif)
-
-### 地铁列车如何保持间隔
-
-从同一条线上的两趟车切入，叠加列车位置与区段占用，再用简化轨道示意对照不同分区。
-
-![列车沿轨道移动，依次展示区段占用和分区对照](demo/case-gifs/metro-headway.gif)
-
-### 极光为什么有不同颜色
-
-用极光画面建立现象，再把高度、不同发光色带和波长标签叠在同一纵轴上。
-
-![红色、绿色和蓝紫色极光与高度和波长标注的动画](demo/case-gifs/aurora-colors.gif)
-
-### 沙丘为什么会发出低音
-
-先用波形表现鸣沙的低音，再叠加沙层剖面和声波示意，帮助理解可能的形成机制。
-
-![沙丘、低频波形和沙层剖面的动画](demo/case-gifs/singing-dunes.gif)
+完整指令见 [SKILL.md](mg-animation-studio/SKILL.md) 与 [范例导览](mg-animation-studio/references/demos.md)。
 
 ## 校验与交付
 
-MG Studio 把检查分为两个环节。在影片工程目录运行：
-
 | 环节 | 命令 | 检查内容 |
 | --- | --- | --- |
-| **工程与关键帧** | `npm run verify` · `npm run stills` | 随机跳转、暂停和新页面画面的一致性，已声明的文字边界。另看主体是否被遮挡、数字是否可读、动作中间态是否清楚。 |
-| **导出与成片** | `npm run render` · `npm run check` | MP4 的完整解码、尺寸、帧率、时长与音轨。播放检查旁白与画面、停顿和转场。 |
+| **确定性与关键帧** | `npm run verify` · `npm run stills` | 正序/逆序/乱序跳转、静置停留与新页面画面一致性；输出接触表供全分辨率导演审片。 |
+| **导出与实片核验** | `npm run render` · `npm run check` | H.264 完整解码、分辨率、帧率、时长、静音/有声意图、LUFS 与真峰值检测。 |
 
-[运行与接口](mg-animation-studio/references/runtime.md)包含配乐、旁白和静音的渲染命令。[验收标准](mg-animation-studio/references/quality.md)列出了数据、机制、手绘和不同画幅的检查重点。
+声音、GPU 渲染与多字体配置见 [运行与接口](mg-animation-studio/references/runtime.md)；验收与修正规范见 [验收标准](mg-animation-studio/references/quality.md)。
 
 ## 仓库说明
 
 | 目录 | 内容 |
 | --- | --- |
-| [mg-animation-studio/](mg-animation-studio/) | Skill 指令、制作参考、Canvas 起步工程和渲染工具 |
-| [examples/](examples/) | 数据、缓存、台灯与剪纸四个可编辑工程，包含简报、分镜、时间轴与材质 |
-| `demo/` | 三版对照资料 |
+| [mg-animation-studio/](mg-animation-studio/) | Skill 正文、宏观美学与路由参考、空白起步工程、工具箱（`look.js` / `camera.js` / `motion.js` / `layers.js`）、渲染校验脚本与 4 支可运行范例（`assets/demos/`） |
+| [demo/](demo/) | 4 支范例的动图预览、关键帧接触表与本地浏览页（`demo/index.html`） |
 
-随附 Noto Sans SC 的许可见 [OFL.txt](mg-animation-studio/assets/starter/assets/OFL.txt)。
+随附 Noto Sans SC 字体许可见 [OFL.txt](mg-animation-studio/assets/starter/assets/OFL.txt)。

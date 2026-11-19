@@ -1,0 +1,74 @@
+{
+  "title": "MATTER OF LIGHT · 元素之形",
+  "draft": false,
+  "route": {
+    "emphasis": "aesthetic",
+    "vision": "yes"
+  },
+  "capture": "dom",
+  "gpu": true,
+  "fonts": [],
+  "duration": 28,
+  "fps": 60,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 124,
+  "seed": 1337,
+  "loop": false,
+  "audio": {
+    "script": "audio/compose.py",
+    "integratedLufs": -16,
+    "truePeakDb": -1.5
+  },
+  "scenes": [
+    {
+      "id": "paper-sphere",
+      "from": 0,
+      "to": 3.2,
+      "purpose": "画廊纸白开场与朱红漆球落位"
+    },
+    {
+      "id": "vermilion-slam",
+      "from": 3.2,
+      "to": 5.6,
+      "purpose": "国际朱红满版排版宣言"
+    },
+    {
+      "id": "hydrogen",
+      "from": 5.6,
+      "to": 10.4,
+      "purpose": "液态铬球体与黑场光影"
+    },
+    {
+      "id": "carbon",
+      "from": 10.4,
+      "to": 15.2,
+      "purpose": "切面黑钻与背后巨字三明治纵深"
+    },
+    {
+      "id": "neon",
+      "from": 15.2,
+      "to": 18.4,
+      "purpose": "炽红发光玻璃扭结与悬浮星尘"
+    },
+    {
+      "id": "slam-beats",
+      "from": 18.4,
+      "to": 20.4,
+      "purpose": "三拍色块巨字快切"
+    },
+    {
+      "id": "argon",
+      "from": 20.4,
+      "to": 24.4,
+      "purpose": "光学棱镜色散与环轨"
+    },
+    {
+      "id": "finale",
+      "from": 24.4,
+      "to": 28,
+      "purpose": "画廊雕塑陈列与星形主徽标收束"
+    }
+  ],
+  "cues": []
+}

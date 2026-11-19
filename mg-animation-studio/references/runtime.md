@@ -2,31 +2,50 @@
 
 ## 环境
 
-Node.js 22+、Python 3（初始化、手绘示例配乐和单 HTML 打包，仅标准库）、FFmpeg/ffprobe、Playwright Chromium。项目锁定 Playwright 与 sharp 版本；优先 `npm ci`。缺 FFmpeg 时通过官方发行源或常用包管理器安装，遵循宿主授权。不要读用户浏览器配置、复用私人 Chrome 会话或关闭安全保护。
+Node.js 22+、Python 3（初始化和单 HTML 打包，仅标准库）、FFmpeg/ffprobe、Playwright Chromium。项目锁定 Playwright 与 sharp 版本；优先 `npm ci`。缺 FFmpeg 时通过官方发行源或常用包管理器安装，遵循宿主授权。不要读用户浏览器配置、复用私人 Chrome 会话或关闭安全保护。
 
-字体随工程分发：Noto Sans SC，SIL Open Font License，许可证在 `assets/OFL.txt`。不依赖国外字体 CDN。替换品牌字体时放入 assets、改 `@font-face` 并确认许可。网络隔离的渲染阶段只允许当前 loopback 工程资源；缺失素材会使任务失败。
+字体随工程分发：Noto Sans SC（family 名 `StudioSans`），SIL Open Font License，许可证在 `assets/OFL.txt`。不依赖字体 CDN。其他字体放进 `assets/` 并在 `film.json` 声明，每个声明的字重都必须真实加载，系统回退直接报错：
+
+```json
+"fonts": [
+  {"family": "Serif", "src": "./assets/NotoSerifSC-VF.ttf", "weight": "200 900", "check": [400, 900]},
+  {"family": "Kai", "src": "./assets/LXGWWenKai-Regular.ttf", "weight": "400", "check": [400]}
+]
+```
+
+Canvas 中用 `d.type('文字',x,y,{family:'Serif',size:120,weight:300,tracking:.02})`；DOM 模式直接写 CSS `font-family`。排印气质参考 [craft-philosophy.md](craft-philosophy.md#4-排印是视觉造型的一部分)。网络隔离的渲染阶段只允许当前 loopback 工程资源；缺失素材会使任务失败。
 
 ## 文件职责
 
 | 文件 | 职责 |
 |---|---|
-| film.json | 尺寸、时长、fps、BPM、场景区间与音效点；story 的 storyTiming 供画面与配乐共同读取 |
-| index.html | 本地字体加载、预览播放、明确的 render 模式 |
-| src/film.js | 每个镜头如何绘制；新片主要修改这里 |
-| src/story.js / src/industry.js | 纸感叙事、产品/架构/数据的独立示例 renderer |
-| lib/motion.js | 闭式弹簧、缓动和索引式随机数 |
-| lib/layers.js | 在首帧前解码项目内的素材，在 Canvas 中按位置和透明度合成 |
-| lib/draw.js / lib/handdrawn.js / lib/data.js | 纸纹、铅笔重描、纸鸟关节/锚点、可见文字范围；数据、拓扑与安全边距校验 |
-| tools/studio.mjs | 静帧、确定性检查、逐帧渲染 |
+| film.json | 尺寸、时长、fps、BPM、场景区间、音效点；`route`（路由）、`capture`（canvas/dom）、`fonts`、可选 `layers`/`dataset`/`graph` |
+| index.html | 字体加载与校验、创建舞台（canvas 或 div）、预览播放、render 模式 |
+| src/film.js | 本片的全部绘制；初始化时只是空白入口，按本片视觉论点重写 |
+| lib/motion.js | 闭式弹簧、命名缓动（expoOut/quartOut/backOut/smooth/cubicBezier…）、`keys()` 关键帧、`stagger()` 错峰、索引式随机数 |
+| lib/camera.js | `camera()` 关键帧相机、`layer()` 视差深度层与景深、`project()` 世界坐标转屏幕坐标 |
+| lib/look.js | `grain` 颗粒、`vignette` 暗角、`bloom` 溢光、`additive` 加色、`glow` 辉光、`softShadow` 接触阴影、`curtain` 发光垂幕/体积光、`duotone` 渐变映射、`halftone` 网点 |
+| lib/layers.js | 在首帧前解码项目内图片，在 Canvas 中按位置和透明度合成 |
+| lib/draw.js / lib/handdrawn.js / lib/data.js | 文字（多字体、字距）与安全区检查、铅笔重描与排线、纸/印刷底纹、`sampleKeyframes`；数据、拓扑与安全边距校验 |
+| tools/studio.mjs | 静帧、确定性检查、逐帧渲染（canvas 读像素 / dom 元素截图） |
 | tools/audio.mjs | 原创配乐、外部音乐/旁白混音 |
 | tools/check.mjs | 视频编码、帧数、时长、音频响度检查 |
-| tools/story_score.py / tools/pack_html.py | 原创钢琴近似配乐；单文件离线预览打包 |
+| tools/pack_html.py | 单文件离线预览打包 |
 
 ## 时间与页面协议
 
 `window.MG` 包含 `ready: true`、`duration`、`width`、`height`、`fps`、`seek(t)` 及可选 `inspect()` / `trace()`。先加载字体/图片，再标 ready。入口同时支持同步和异步 `createFilm`。素材分层配置见[分层美术与逐步讲解](art-and-flow.md)。字体 load 使用实际中文和数字样本，确认返回了声明 family 且状态 loaded 的 FontFace；仅 `document.fonts.check()` 可能接受系统回退，不能证明声明字体存在。缺字仍需实际画面检查。`t` 单位秒，有效区间 `[0,duration)`；最后一个输出帧是 `(frameCount-1)/fps`。
 
-渲染器读取 `#stage` Canvas 的像素。采用 DOM/SVG 绘制时须把帧捕获改为元素截图，并增加布局检查；不能声称当前直接导出工具已支持所有 DOM/WebGL 工程。
+## GPU、Three.js 与系统字体
+
+- `film.json` 设 `"gpu": true`（或命令行 `--gpu`），渲染用本机真实 GPU 跑 WebGL；默认的无头软件光栅很慢，复杂材质也会失真。GPU 输出在同一台机器上可复现，换机器后重新 `verify`。
+- Three.js：`npm i three` 后在 renderer 里 `import * as THREE from 'three'`，扩展用 `import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js'`（index.html 已带 import map）。`WebGLRenderer` 要开 `preserveDrawingBuffer:true`；所有动画在 `seek(t)` 里按 t 设置，然后调用一次 `renderer.render()`，不要用 `setAnimationLoop`。环境光照可用 `RoomEnvironment` + `PMREMGenerator`，色调映射用 ACES。
+- 系统字体：`{"family":"Bodoni 72","local":true}`，renderer 里直接用这个 family 名；加载时用字形宽度对比确认它真的装在本机，否则报错。只在装了该字体的机器上可复现；交付时写明。商用发布前确认字体许可。
+
+## 两种捕获模式
+
+- `capture:"canvas"`（默认）：`createFilm(canvas,cfg)`，工具读取 `#stage` Canvas 像素。适合程序化绘制、粒子、光效和 `look.js`。WebGL 可直接在这块 canvas 上创建上下文（需 `preserveDrawingBuffer:true`）。
+- `capture:"dom"`：`createFilm(div,cfg)`，舞台是 `<div id="stage">`，可放 HTML、SVG（滤镜、遮罩、路径动画）、CSS（混合模式、`clip-path`、排版）、子 canvas 或 WebGL。工具在每次 `seek(t)` 后等待图片解码、字体就绪和两帧绘制，再对舞台元素截图。render 模式下全局禁用 CSS animation/transition：所有样式都要在 `seek(t)` 里按 t 设置。Lottie 用 `goToAndStop(t*1000)`，GSAP 时间线 `paused:true` 后 `seek(t)`。DOM 模式没有自动文字越界检查，`layoutCoverage` 为 manual-only，须看图。
 
 画面必须只依赖 t、配置和已加载素材：
 
@@ -37,9 +56,9 @@ Node.js 22+、Python 3（初始化、手绘示例配乐和单 HTML 打包，仅�
 - 自动预览使用 requestAnimationFrame，但 `?render=1` 下完全关闭；不要用 navigator.webdriver 猜环境。
 - 弹簧有欠阻尼、临界阻尼、过阻尼三种分支。多目标轨迹可叠加阶跃响应；文本阅读区域少用过冲。
 
-`inspect()` 返回当前可见文字/关键对象的越界问题列表。示例对 Canvas 字体度量后应用当前变换矩阵；这能发现越界，**不能发现遮挡和视觉拥挤**，仍须看图。kinetic 示范采用满屏构图，未挂接文字包围框；其 layoutCoverage 标为 manual-only，须逐镜看图。
+`inspect()` 返回当前可见文字/关键对象的越界问题列表。`draw.js` 的 `text/type` 对 Canvas 字体度量后应用当前变换矩阵；这能发现越界，**不能发现遮挡和视觉拥挤**，仍须看图。装饰性巨字有意出画时传 `check:false`。
 
-story 使用 1:1 构图；industry 支持横版 16:9 至 32:9。其他画幅要重做构图，不是强行缩放。story/industry 的主文字按 safeInsets 检查，装饰微字和对象遮挡仍由审图确认。story 通过 `presets/story.json` 初始化为 32 秒、长短不一的动作段落；industry 是 24 秒的示例。它们都是创作起点，不是新片限制。改时长或故事时同步修改 renderer、分镜及配乐，不能只改 duration；storyTiming 统一关键节点，局部姿态与音符时值仍由代码编排。
+任何画幅都要单独构图，不是强行缩放。改时长或故事时同步修改 renderer、分镜及配乐，不能只改 duration。
 
 半透明纹理与多次 Canvas 像素读取可能触发浏览器渲染路径切换，产生微小像素差异。`lib/draw.js` 每帧完整 `reset()` 上下文，并在创建 context 时使用 `willReadFrequently:true` 固定 CPU 路径；不要只放宽哈希验证来掩盖不稳定。
 
@@ -76,7 +95,7 @@ node tools/audio.mjs mix --video ./out/1920x1080-30fps/silent.mp4 --out ./out/ne
 
 外部音乐短于影片默认报错；明确适合循环时加 `--loop-music`，并人工检查接缝。默认只淡入淡出音乐，不改变旁白内容；旁白应在剪辑前校核长度，避免被时长截断。配乐与旁白先混合为 WAV，再两遍 loudnorm，最后 AAC 编码，再次测量成片。默认目标 -16 LUFS、-1.5 dBTP 是交付选择，不是所有平台强制标准。
 
-`audio.mode` 缺省为 `"sound"`。用户明确要求静音时设为 `"silent"`，清空 cues，不运行 score、不传 music/voice；直接 verify、stills、render、check。静音成片必须零音轨，检查器同时核对配置与渲染记录。静音预览用自身时钟，有声预览用音频时钟；两者都尊重 loop。`pack_html.py` 在静音模式不要求 WAV，并拒绝 `--audio`。
+`audio.mode` 缺省为 `"sound"`。当 `film.json.audio.script` 指定项目内的 Python 配乐脚本（如 `"audio/compose.py"`）时，`npm run score` 会直接执行该脚本并校验 `out/score.wav` 输出，适合用 NumPy 等编写定制声景与物理音效。同样可以在 `film.json.audio` 中直接配置 `music` / `voice`（如 `"voice": "./assets/voice.m4a"`），`npm run render` 会自动按 `audio.mix` 压低配乐并完成响度归一化。用户明确要求静音时设为 `"silent"`，清空 cues，不运行 score、不传 music/voice；直接 verify、stills、render、check。静音成片必须零音轨，检查器同时核对配置与渲染记录。静音预览用自身时钟，有声预览用音频时钟；两者都尊重 loop。`pack_html.py` 在静音模式不要求 WAV，并拒绝 `--audio`。
 
 旁白与配乐的输入音量不同，压低音乐的阈值也应不同。可用 `audio.mix` 配置：
 
@@ -92,7 +111,7 @@ node tools/audio.mjs mix --video ./out/1920x1080-30fps/silent.mp4 --out ./out/ne
 
 有旁白的混音分支让两路滤镜输入比交付时长多保留 1 秒补零，再以原时长输出，防止该链路在源输入结束附近提前截掉淡出；这不会延长影片或截短旁白。过长旁白仍先报错，不能用补零代替重排分镜。
 
-BPM 与 beatOffset 不会自动重写画面；改变 BPM 后要同步重排镜头和 cue。外部音乐：把确认的节拍点回填到分镜、cue 和动画时间。story 的 felt 配乐从 `storyTiming` 读取衔取、放下、入夜、苏醒、成形和收束的时间，并在 `out/audio-source.json` 记录实际音符事件及分段 RMS。`cues` 是普通配乐引擎的输入；felt 分支由 story_score.py 编排动作音效，不重复叠加 cues。当前工具不做自动节拍检测或 TTS；有需要时连接实际可用的工具，记录服务、声音、费用与来源，不假称已支持接口。
+BPM 与 beatOffset 不会自动重写画面；改变 BPM 后要同步重排镜头和 cue。外部音乐：把确认的节拍点回填到分镜、cue 和动画时间。`cues` 是配乐引擎的动作音效输入。当前工具不做自动节拍检测或 TTS；有需要时连接实际可用的工具，记录服务、声音、费用与来源，不假称已支持接口。
 
 ## 常见故障
 

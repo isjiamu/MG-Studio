@@ -3,290 +3,104 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101816">
-<title>MG Studio · 三版动画对比</title>
+<title>MG Studio · 高水准范例画廊</title>
 <style>
-:root{--bg:#101816;--panel:#18231f;--ink:#f1f1e8;--weak:#aebdb2;--line:#35443d;--lime:#d7ef8e;--dark:#182117;--max:1230px;--font:"PingFang SC","Noto Sans CJK SC",system-ui,sans-serif}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:75px}
-body{margin:0;background:var(--bg);font-family:var(--font);color:var(--ink);line-height:1.55}
-a{color:inherit;text-decoration:none}a:hover{color:var(--lime)}
-a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible,video:focus-visible{outline:2px solid var(--lime);outline-offset:4px}
-button,select{font:inherit}button{cursor:pointer}
-.top{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:5}
-.top-inner{max-width:var(--max);margin:auto;min-height:57px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 28px}
-.brand{font-size:15px;font-weight:800;white-space:nowrap}
-nav{display:flex;gap:22px;color:var(--weak);font-size:13px;flex-wrap:wrap}
-main{max-width:var(--max);margin:auto;padding:0 28px}
-.hero{padding:58px 0 42px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:48px;align-items:center}
-.date{color:var(--weak);font-size:13px;letter-spacing:.06em}
-h1{font-size:clamp(45px,7vw,102px);letter-spacing:-.055em;line-height:1.04;margin:18px 0 22px;font-weight:850}
-h1 em{font-style:normal;color:var(--lime)}
-.summary{color:var(--ink);max-width:590px;font-size:17px;margin-bottom:19px}
-.specs{display:flex;gap:19px;flex-wrap:wrap;color:var(--weak);font-size:13px;margin-top:21px}
-.overview-link{display:inline-block;border:1px solid var(--line);padding:9px 15px;border-radius:7px;font-size:14px;color:var(--lime);margin-top:4px}
-.result{border:1px solid var(--line);border-radius:15px;background:var(--panel);padding:24px}
-.result h2{font-size:17px;margin:0 0 13px;font-weight:720}
-table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
-th,td{padding:8px 0;text-align:right;border-top:1px solid var(--line)}
-th:first-child,td:first-child{text-align:left}
-th{font-weight:560}thead th{white-space:nowrap;color:var(--weak);font-size:12px}tfoot th,tfoot td{color:var(--lime);font-weight:800;font-size:18px}
-.result p{margin:13px 0 0;font-size:12px;color:var(--weak)}
-.case{border-top:1px solid var(--line);padding:36px 0 30px;margin-bottom:16px}
-.caseheader{margin-bottom:20px}
-.kind{display:block;color:var(--lime);font-size:14px;font-weight:720}
-.case h2{font-size:clamp(28px,4vw,48px);letter-spacing:-.035em;line-height:1.18;margin:8px 0 9px}
-.caseheader p{margin:0;color:var(--weak);font-size:16px}
-.action{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:0 0 12px}
-.sync{border:none;background:var(--lime);color:var(--dark);border-radius:7px;padding:8px 15px;font-weight:750;width:116px}
-.caption{min-height:2.1em;font-size:15px;color:var(--lime);margin:0 0 9px}
-.ghost{color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-size:12px}
-.jump{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
-.ghost:hover{border-color:var(--lime)}
-.ghost time{color:var(--lime);font-variant-numeric:tabular-nums}
-.pair{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.clip{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
-.clip[data-version=c]{border-color:#859a63}.clip[data-version=c] .clip-title i{background:var(--lime);color:var(--dark)}
-.clip-title{height:50px;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 14px}
-.clip-title div{display:flex;align-items:center;gap:9px;min-width:0}
-.clip-title i{font-style:normal;background:#2e4035;color:var(--lime);font-size:13px;font-weight:800;display:grid;place-items:center;border-radius:5px;width:24px;height:23px;flex:none}
-.clip-title strong{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.clip-title span{font-size:12px;color:var(--weak);white-space:nowrap}
-video{display:block;width:100%;aspect-ratio:16/9;background:#060b09;object-fit:contain}
-.clip-notes{display:flex;flex-direction:column;flex:1;justify-content:space-between;padding:14px}
-.clip-notes p{font-size:14px;margin:0 0 12px}
-.marks{display:flex;gap:14px;flex-wrap:wrap;color:var(--weak);border-top:1px solid var(--line);padding-top:9px}
-.marks span{font-size:12px;display:flex;align-items:center;gap:5px}
-.marks b{font-variant-numeric:tabular-nums;font-size:16px;color:var(--lime)}
-.links{display:flex;gap:15px;flex-wrap:wrap;font-size:13px;margin:15px 0;color:var(--lime)}
-.status{color:var(--weak);font-size:12px;margin:7px 0 0}.status:empty{display:none}
-details{border:1px solid var(--line);border-radius:7px;overflow:hidden}
-summary{cursor:pointer;padding:11px 13px;font-size:13px;color:var(--ink)}
-.detail-inner{padding:0 14px 12px;color:var(--weak);font-size:14px}
-.detail-inner p{margin:0 0 9px}
-.spec{font-size:13px}
-.cues{border-top:1px solid var(--line);margin-top:14px}
-.cue{display:grid;grid-template-columns:132px 1fr;gap:12px;border-bottom:1px solid var(--line);padding:6px 0}
-.cue time{font-variant-numeric:tabular-nums;color:var(--lime);font-size:12px}
-.methods{border-top:1px solid var(--line);padding:25px 0 45px;color:var(--weak);font-size:14px}
-.methods h2{font-size:20px;color:var(--ink);margin:0}.methods p{max-width:800px}
-@media(max-width:880px){.hero{grid-template-columns:1fr;gap:25px;padding-top:36px}.jump{margin-left:0}}
-@media(max-width:780px){.pair{grid-template-columns:1fr}}
-@media(max-width:660px){.top-inner{padding:8px 15px;align-items:flex-start;gap:7px;flex-direction:column}nav{gap:13px}main{padding:0 15px}.hero{padding-top:25px}.pair{grid-template-columns:1fr}.case{padding-top:24px}.specs{gap:11px}.cue{grid-template-columns:97px 1fr;gap:7px}.hero .result{padding:15px}.jump{width:100%}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0e1013;
+    color: #f3efe6;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    line-height: 1.6;
+    padding: 56px 28px 80px;
+  }
+  .wrap { max-width: 1220px; margin: 0 auto; }
+  header { margin-bottom: 48px; border-bottom: 1px solid #262930; padding-bottom: 28px; }
+  header h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.02em; }
+  header p { color: #9ea4b0; margin-top: 10px; max-width: 720px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 32px; }
+  article {
+    background: #15181e;
+    border: 1px solid #252932;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  article img.preview { width: 100%; display: block; aspect-ratio: 16 / 9; object-fit: cover; background: #090a0d; }
+  .body { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .meta { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #ff6b4a; font-weight: 600; }
+  h2 { font-size: 22px; font-weight: 700; }
+  .desc { color: #b5bac4; font-size: 14px; }
+  .links { margin-top: auto; padding-top: 12px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  a { color: #f3efe6; text-decoration: none; border-bottom: 1px solid #4c5363; font-size: 13px; padding-bottom: 2px; }
+  a:hover { border-color: #ff6b4a; color: #ff6b4a; }
+  code {
+    background: #0d0f13;
+    border: 1px solid #262a33;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #d6dce6;
+  }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-<div class="top"><div class="top-inner"><a class="brand" href="#top">MG 动画对比</a><nav aria-label="跳到案例"><a href="#data">数据播报</a><a href="#cache">机制科普</a><a href="#lamp">概念产品</a><a href="#paper">剪纸叙事</a></nav></div></div>
-<main id="top">
-  <div class="hero">
-    <div>
-      <div class="date">公开演示 · 2026.11.19</div>
-      <h1>同题动画<br><em>三版本实测</em></h1>
-      <p class="summary"><strong>C 本地优化版</strong>保留产品和剪纸的材质分层，也让当前步骤、状态变化和讲解同步。四道题里，缓存和台灯最容易看出合并后的改进。</p>
-      <a class="overview-link" href="frames/comparison-overview.png" target="_blank">打开四组关键帧总览 ↗</a>
-      <div class="specs"><span>4 个案例</span><span>12 条成片</span><span>每条 30 秒</span><span>1080p · 同步字幕</span></div>
-    </div>
-    <div class="result">
-      <h2>四题评分</h2>
-      <table aria-label="四道测试题评分">
-        <thead><tr><th scope="col">案例</th><th scope="col">MG Studio<br>A</th><th scope="col">本地原版<br>B</th><th scope="col">本地优化版<br>C</th></tr></thead>
-        <tbody><tr><th scope="row"><a href="#data">数据播报</a></th><td>17</td><td>17</td><td>18</td></tr><tr><th scope="row"><a href="#cache">机制科普</a></th><td>17</td><td>18</td><td>19</td></tr><tr><th scope="row"><a href="#lamp">概念产品</a></th><td>17</td><td>17</td><td>19</td></tr><tr><th scope="row"><a href="#paper">剪纸叙事</a></th><td>17</td><td>16</td><td>18</td></tr></tbody>
-        <tfoot><tr><th scope="row">总分 / 80</th><td>68</td><td>68</td><td>74</td></tr></tfoot>
-      </table>
-      <p>制作方样片评分。画面、信息、运动、音画各 5 分，每题满分 20 分。</p>
-    </div>
-  </div>
-
-<section class="case" id="data" aria-labelledby="data-title">
-  <header class="caseheader"><span class="kind">数据播报</span><h2 id="data-title">澄屿书店的到店人数</h2><p>数值比较与趋势提示放进同一张图</p></header>
-  <div class="comparer" data-compare>
-    <div class="action">
-      <button class="sync">同步三版</button>
-
-      <div class="jump"><button class="ghost seek" data-seek="6.5"><time>6.50s</time> 首月入画</button><button class="ghost seek" data-seek="15.62"><time>15.62s</time> 三月回落</button><button class="ghost seek" data-seek="26.25"><time>26.25s</time> 四月翻倍</button></div>
-    </div>
-    <p class="caption" aria-live="off"></p>
-    <div class="pair">
-<div class="clip" data-version="a">
-  <div class="clip-title"><div><i>A</i><strong>MG Studio</strong></div><span>Remotion</span></div>
-  <video preload="metadata" controls playsinline data-track="a" poster="frames/data-a-3.jpg" src="videos/data-a.mp4" aria-label="澄屿书店的到店人数，MG Studio"></video>
-  <div class="clip-notes"><p>四列共用零基线，末段用大号 2.0× 和 1,200 人的参考线，能直接比出一月与四月的差距。三月用纹理标出，降幅仍要靠对比相邻柱高。</p><div class="marks"><span><b>4</b>画面</span><span><b>5</b>信息</span><span><b>4</b>运动</span><span><b>4</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="b">
-  <div class="clip-title"><div><i>B</i><strong>本地原版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="b" poster="frames/data-b-3.jpg" src="videos/data-b.mp4" aria-label="澄屿书店的到店人数，本地原版"></video>
-  <div class="clip-notes"><p>三月的橙色折线把回落直接画出来，适合听着旁白看趋势。两倍关系主要靠右下角的结论文字。</p><div class="marks"><span><b>4</b>画面</span><span><b>4</b>信息</span><span><b>5</b>运动</span><span><b>4</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="c">
-  <div class="clip-title"><div><i>C</i><strong>本地优化版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="c" poster="frames/data-c-3.jpg" src="videos/data-c.mp4" aria-label="澄屿书店的到店人数，本地优化版"></video>
-  <div class="clip-notes"><p>沿用从零起的柱形和一月基准线。三月用箭头和「比二月少 300 人」解释回落，四月用 2.0× 收束。右侧书店插画和纸纹留出独立区域，图表的数值仍由代码排版。</p><div class="marks"><span><b>5</b>画面</span><span><b>5</b>信息</span><span><b>4</b>运动</span><span><b>4</b>音画</span></div></div>
-</div></div>
-    <p class="status" role="status"></p>
-  </div>
-  <div class="links"><a href="frames/compare-data.png" target="_blank">查看三时点对比图 ↗</a><a download href="videos/data-a.mp4">下载 A 视频</a><a download href="videos/data-b.mp4">下载 B 视频</a><a download href="videos/data-c.mp4">下载 C 视频</a></div>
-  <details><summary>查看共同提示词与字幕时间表</summary>
-    <div class="detail-inner"><p>为虚构的「澄屿书店」做一条到店人数播报。1 至 4 月分别为 1,200、1,800、1,500、2,400 人。四个月按顺序揭示，保留清楚的单位和每月的准确数值，体现 3 月回落，并让观众看出 4 月是 1 月的 2 倍。画面标明示例数据。</p><p class="spec">做成一条 30 秒的中文 MG 动画，16:9、1920×1080、24 fps、H.264 MP4。写一段与主体动作和读图节奏对应的普通话旁白，片尾留时间看清结果。画面不使用外部商标。</p><div class="cues"><div class="cue" data-start="00.70" data-end="03.45"><time>00.70–03.45 秒</time><span>这是澄屿书店一到四月的到店人数。</span></div><div class="cue" data-start="04.40" data-end="05.73"><time>04.40–05.73 秒</time><span>一月一千二百人。</span></div><div class="cue" data-start="08.55" data-end="10.32"><time>08.55–10.32 秒</time><span>二月增到一千八百人。</span></div><div class="cue" data-start="13.35" data-end="15.32"><time>13.35–15.32 秒</time><span>三月回落到一千五百人。</span></div><div class="cue" data-start="18.50" data-end="22.02"><time>18.50–22.02 秒</time><span>四月达到两千四百人，正好是一月的两倍。</span></div><div class="cue" data-start="25.50" data-end="27.09"><time>25.50–27.09 秒</time><span>这组数字是示例数据。</span></div></div></div>
-  </details>
-</section>
-<section class="case" id="cache" aria-labelledby="cache-title">
-  <header class="caseheader"><span class="kind">机制科普</span><h2 id="cache-title">为什么第二次加载更快？</h2><p>跟着一条路径走完，再并排回看两次读取</p></header>
-  <div class="comparer" data-compare>
-    <div class="action">
-      <button class="sync">同步三版</button>
-
-      <div class="jump"><button class="ghost seek" data-seek="6.88"><time>6.88s</time> 未命中</button><button class="ghost seek" data-seek="13.75"><time>13.75s</time> 回填并返回</button><button class="ghost seek" data-seek="23.12"><time>23.12s</time> 缓存直返</button><button class="ghost seek" data-seek="27.1"><time>27.10s</time> 回看两条路径</button></div>
-    </div>
-    <p class="caption" aria-live="off"></p>
-    <div class="pair">
-<div class="clip" data-version="a">
-  <div class="clip-title"><div><i>A</i><strong>MG Studio</strong></div><span>Remotion</span></div>
-  <video preload="metadata" controls playsinline data-track="a" poster="frames/cache-a-3.jpg" src="videos/cache-a.mp4" aria-label="为什么第二次加载更快？，MG Studio"></video>
-  <div class="clip-notes"><p>上下保留两次完整的读取路径，停下来可以直接对照少走了哪两段。每条路径都保留三级节点，第一次看的信息量更大。</p><div class="marks"><span><b>4</b>画面</span><span><b>5</b>信息</span><span><b>4</b>运动</span><span><b>4</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="b">
-  <div class="clip-title"><div><i>B</i><strong>本地原版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="b" poster="frames/cache-b-3.jpg" src="videos/cache-b.mp4" aria-label="为什么第二次加载更快？，本地原版"></video>
-  <div class="clip-notes"><p>一次只讲一次读取，右上的状态跟着查缓存、回填和返回切换。旁白说到哪一步，视线就跟到哪一步，适合线性观看。</p><div class="marks"><span><b>4</b>画面</span><span><b>4</b>信息</span><span><b>5</b>运动</span><span><b>5</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="c">
-  <div class="clip-title"><div><i>C</i><strong>本地优化版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="c" poster="frames/cache-c-3.jpg" src="videos/cache-c.mp4" aria-label="为什么第二次加载更快？，本地优化版"></video>
-  <div class="clip-notes"><p>查缓存、读源站、回填和返回各有一个焦点。13.75 秒可看到副本写入进度；25.15 秒后把两次路径并列，能直接看出命中时为何跳过源站。</p><div class="marks"><span><b>4</b>画面</span><span><b>5</b>信息</span><span><b>5</b>运动</span><span><b>5</b>音画</span></div></div>
-</div></div>
-    <p class="status" role="status"></p>
-  </div>
-  <div class="links"><a href="frames/compare-cache.png" target="_blank">查看三时点对比图 ↗</a><a download href="videos/cache-a.mp4">下载 A 视频</a><a download href="videos/cache-b.mp4">下载 B 视频</a><a download href="videos/cache-c.mp4">下载 C 视频</a></div>
-  <details><summary>查看共同提示词与字幕时间表</summary>
-    <div class="detail-inner"><p>用同一份内容的两次读取解释缓存。第一次请求先查缓存，未命中，再从源站取回数据，把副本写入缓存并返回给用户。第二次有效缓存命中，从缓存直接返回，源站不参与。用运动区分请求和返回方向，标签可读，避免把动画时间当作真实性能数据。</p><p class="spec">做成一条 30 秒的中文 MG 动画，16:9、1920×1080、24 fps、H.264 MP4。写一段与主体动作和读图节奏对应的普通话旁白，片尾留时间看清结果。画面不使用外部商标。</p><div class="cues"><div class="cue" data-start="00.55" data-end="03.67"><time>00.55–03.67 秒</time><span>同一份内容，为什么第二次加载得更快？</span></div><div class="cue" data-start="04.55" data-end="08.56"><time>04.55–08.56 秒</time><span>第一次先查缓存。没找到，就到源站取内容。</span></div><div class="cue" data-start="11.25" data-end="16.09"><time>11.25–16.09 秒</time><span>取回内容后，把副本写进缓存，再把内容返回给用户。</span></div><div class="cue" data-start="17.65" data-end="21.91"><time>17.65–21.91 秒</time><span>第二次请求同一份内容，缓存里已经有有效副本。</span></div><div class="cue" data-start="23.05" data-end="26.93"><time>23.05–26.93 秒</time><span>缓存直接返回内容，省去一次到源站的往返。</span></div></div></div>
-  </details>
-</section>
-<section class="case" id="lamp" aria-labelledby="lamp-title">
-  <header class="caseheader"><span class="kind">概念产品</span><h2 id="lamp-title">昼屿 · 折叠台灯</h2><p>保留产品光感，把旋钮和铰链放到可读大小</p></header>
-  <div class="comparer" data-compare>
-    <div class="action">
-      <button class="sync">同步三版</button>
-
-      <div class="jump"><button class="ghost seek" data-seek="8.12"><time>8.12s</time> 亮起</button><button class="ghost seek" data-seek="16.25"><time>16.25s</time> 旋钮调光</button><button class="ghost seek" data-seek="26.88"><time>26.88s</time> 灯臂折叠</button></div>
-    </div>
-    <p class="caption" aria-live="off"></p>
-    <div class="pair">
-<div class="clip" data-version="a">
-  <div class="clip-title"><div><i>A</i><strong>MG Studio</strong></div><span>Remotion</span></div>
-  <video preload="metadata" controls playsinline data-track="a" poster="frames/lamp-a-2.jpg" src="videos/lamp-a.mp4" aria-label="昼屿 · 折叠台灯，MG Studio"></video>
-  <div class="clip-notes"><p>金属暖色、投影与聚光营造出桌面环境。光斑变亮能直观看出调光，旋钮的转角在小窗里容易错过。</p><div class="marks"><span><b>5</b>画面</span><span><b>4</b>信息</span><span><b>4</b>运动</span><span><b>4</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="b">
-  <div class="clip-title"><div><i>B</i><strong>本地原版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="b" poster="frames/lamp-b-2.jpg" src="videos/lamp-b.mp4" aria-label="昼屿 · 折叠台灯，本地原版"></video>
-  <div class="clip-notes"><p>高对比旋钮指针、亮度条和铰链虚线把操作讲得更直白。清爽的示意图保留了可读性，灯体材质表现较少。</p><div class="marks"><span><b>4</b>画面</span><span><b>5</b>信息</span><span><b>4</b>运动</span><span><b>4</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="c">
-  <div class="clip-title"><div><i>C</i><strong>本地优化版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="c" poster="frames/lamp-c-2.jpg" src="videos/lamp-c.mp4" aria-label="昼屿 · 折叠台灯，本地优化版"></video>
-  <div class="clip-notes"><p>拉丝暖金色灯体、桌面光池和绿色环境保留产品片观感。调光时同时显示实际旋钮、放大指针和亮度条；收拢时把弧线锚在铰链上。</p><div class="marks"><span><b>5</b>画面</span><span><b>5</b>信息</span><span><b>4</b>运动</span><span><b>5</b>音画</span></div></div>
-</div></div>
-    <p class="status" role="status"></p>
-  </div>
-  <div class="links"><a href="frames/compare-lamp.png" target="_blank">查看三时点对比图 ↗</a><a download href="videos/lamp-a.mp4">下载 A 视频</a><a download href="videos/lamp-b.mp4">下载 B 视频</a><a download href="videos/lamp-c.mp4">下载 C 视频</a></div>
-  <details><summary>查看共同提示词与字幕时间表</summary>
-    <div class="detail-inner"><p>为虚构的「昼屿」折叠台灯做一条产品 MG。灯先亮起，旋钮旋转并让光线变亮，最后灯臂沿可见的铰链折叠收拢。使用同一盏台灯贯穿全片，让光线、旋钮、铰链的变化看得见，镜头干净，收尾保留产品名。标注概念演示，不编造参数。</p><p class="spec">做成一条 30 秒的中文 MG 动画，16:9、1920×1080、24 fps、H.264 MP4。写一段与主体动作和读图节奏对应的普通话旁白，片尾留时间看清结果。画面不使用外部商标。</p><div class="cues"><div class="cue" data-start="00.70" data-end="03.23"><time>00.70–03.23 秒</time><span>这是昼屿，一盏可以折叠的台灯。</span></div><div class="cue" data-start="05.00" data-end="07.45"><time>05.00–07.45 秒</time><span>点亮时，暖光落在桌面上。</span></div><div class="cue" data-start="11.40" data-end="14.19"><time>11.40–14.19 秒</time><span>转动底座的旋钮，光线慢慢变亮。</span></div><div class="cue" data-start="19.60" data-end="23.09"><time>19.60–23.09 秒</time><span>用完后，沿铰链折下灯臂，让灯身收拢。</span></div><div class="cue" data-start="26.35" data-end="27.77"><time>26.35–27.77 秒</time><span>昼屿，折叠台灯。</span></div></div></div>
-  </details>
-</section>
-<section class="case" id="paper" aria-labelledby="paper-title">
-  <header class="caseheader"><span class="kind">剪纸叙事</span><h2 id="paper-title">一封信过海</h2><p>分层纸景保留空间，信纸沿同一轮廓折成船</p></header>
-  <div class="comparer" data-compare>
-    <div class="action">
-      <button class="sync">同步三版</button>
-
-      <div class="jump"><button class="ghost seek" data-seek="5.62"><time>5.62s</time> 信纸折叠</button><button class="ghost seek" data-seek="16.88"><time>16.88s</time> 穿过两层浪</button><button class="ghost seek" data-seek="27.5"><time>27.50s</time> 灯塔亮起</button></div>
-    </div>
-    <p class="caption" aria-live="off"></p>
-    <div class="pair">
-<div class="clip" data-version="a">
-  <div class="clip-title"><div><i>A</i><strong>MG Studio</strong></div><span>Remotion</span></div>
-  <video preload="metadata" controls playsinline data-track="a" poster="frames/paper-a-3.jpg" src="videos/paper-a.mp4" aria-label="一封信过海，MG Studio"></video>
-  <div class="clip-notes"><p>纸纹、月亮、远山和三层海浪拉开了空间。灯塔亮起时，纸船的船底还在前景浪后，留出明显的到岸画面。</p><div class="marks"><span><b>5</b>画面</span><span><b>4</b>信息</span><span><b>4</b>运动</span><span><b>4</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="b">
-  <div class="clip-title"><div><i>B</i><strong>本地原版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="b" poster="frames/paper-b-3.jpg" src="videos/paper-b.mp4" aria-label="一封信过海，本地原版"></video>
-  <div class="clip-notes"><p>暖纸底、朱红落日和线条赋予画册感。折痕过渡和船身摆动清楚，海浪与岸石的纵深比夜景版浅。</p><div class="marks"><span><b>4</b>画面</span><span><b>4</b>信息</span><span><b>4</b>运动</span><span><b>4</b>音画</span></div></div>
-</div>
-<div class="clip" data-version="c">
-  <div class="clip-title"><div><i>C</i><strong>本地优化版</strong></div><span>Canvas</span></div>
-  <video preload="metadata" controls playsinline data-track="c" poster="frames/paper-c-3.jpg" src="videos/paper-c.mp4" aria-label="一封信过海，本地优化版"></video>
-  <div class="clip-notes"><p>船身用同一个纸面轮廓逐渐折起。航行中船体掠过前景浪，靠岸停稳后灯塔亮起，水面出现随浪变化的反光。中段收去片名，把视线留给纸船。</p><div class="marks"><span><b>5</b>画面</span><span><b>4</b>信息</span><span><b>5</b>运动</span><span><b>4</b>音画</span></div></div>
-</div></div>
-    <p class="status" role="status"></p>
-  </div>
-  <div class="links"><a href="frames/compare-paper.png" target="_blank">查看三时点对比图 ↗</a><a download href="videos/paper-a.mp4">下载 A 视频</a><a download href="videos/paper-b.mp4">下载 B 视频</a><a download href="videos/paper-c.mp4">下载 C 视频</a></div>
-  <details><summary>查看共同提示词与字幕时间表</summary>
-    <div class="detail-inner"><p>做一条名为《一封信过海》的无对白剪纸 MG。信纸在岸边折成纸船，纸船在前后两层海浪间航行，最终抵达一座灯塔，灯塔亮起。保持信纸到纸船的视觉连续，运用纸张层次和遮挡，结尾有余韵。</p><p class="spec">做成一条 30 秒的中文 MG 动画，16:9、1920×1080、24 fps、H.264 MP4。写一段与主体动作和读图节奏对应的普通话旁白，片尾留时间看清结果。画面不使用外部商标。</p><div class="cues"><div class="cue" data-start="01.00" data-end="03.65"><time>01.00–03.65 秒</time><span>海边，有一封等着出发的信。</span></div><div class="cue" data-start="04.95" data-end="07.79"><time>04.95–07.79 秒</time><span>它沿着折痕，变成一叶小船。</span></div><div class="cue" data-start="10.90" data-end="13.76"><time>10.90–13.76 秒</time><span>浪从身前掠过，又退到身后。</span></div><div class="cue" data-start="17.05" data-end="20.00"><time>17.05–20.00 秒</time><span>小船向着岸边的灯塔继续前行。</span></div><div class="cue" data-start="23.60" data-end="25.28"><time>23.60–25.28 秒</time><span>等它靠岸，灯亮了。</span></div></div></div>
-  </details>
-</section>
-  <section class="methods" aria-labelledby="method-title">
-    <h2 id="method-title">测试口径</h2>
-    <p>A 是 MG Studio 的 Remotion 版，B 是原有 MG Animation Studio 的 Canvas 版，C 是更新本地 Skill 后用 Canvas 制作的版本。每题三版沿用同一提示词和 30 秒规格。C 版参考前两版后制作，分数只对应这 12 条样片。公开版沿用原始画面，以同步字幕展示原旁白。</p>
-    <p>评分来自原始本地制作自查，依据成片抽帧、关键动作的连续帧及旁白时间点。音画项评价旁白和动作的对应关系。</p>
+<div class="wrap">
+  <header>
+    <h1>MG Studio · 范例画廊</h1>
+    <p>四支不同视觉世界与技术栈的可运行工艺标杆。每个范例均可通过 <code>init_project.py --demo &lt;name&gt;</code> 初始化完整可编辑工程并本地渲染 MP4。</p>
+  </header>
+  <section class="grid">
+    <article>
+      <img class="preview" src="./gifs/atelier.gif" alt="MATTER OF LIGHT">
+      <div class="body">
+        <div class="meta">atelier · 28s · 60fps · Three.js GPU WebGL2 + DOM</div>
+        <h2>MATTER OF LIGHT · 元素之形</h2>
+        <p class="desc">实时 PBR 清漆/虹彩材质与自定义 GLSL 着色器，夹在前后两层瑞士编辑排印之间，配合 124 BPM 定制电子配乐与 35mm 微颗粒。</p>
+        <div class="links">
+          <a href="./frames/atelier.jpg" target="_blank">查看关键帧总览</a>
+          <code>--demo atelier</code>
+        </div>
+      </div>
+    </article>
+    <article>
+      <img class="preview" src="./gifs/industrial.gif" alt="LESS, BUT BETTER">
+      <div class="body">
+        <div class="meta">industrial · 22s · 60fps · Pure Canvas 2D</div>
+        <h2>LESS, BUT BETTER · 少，却更好</h2>
+        <p class="desc">零外部图片与 3D 依赖，纯 Canvas 2D 绘制日光陶瓷白与拉丝铝材质、325 孔声学波纹、双旋钮示波器、机械卡位阻尼与物理 ASMR 声景。</p>
+        <div class="links">
+          <a href="./frames/industrial.jpg" target="_blank">查看关键帧总览</a>
+          <code>--demo industrial</code>
+        </div>
+      </div>
+    </article>
+    <article>
+      <img class="preview" src="./gifs/gta6.gif" alt="GTA VI 阳光之下">
+      <div class="body">
+        <div class="meta">gta6 · 60s · 30fps · Canvas + layers + 旁白压低混音</div>
+        <h2>GTA VI · 阳光之下</h2>
+        <p class="desc">8 镜电影预告片级多图分层叙事、斜切转场、定时字幕、120 BPM 合成器浪潮原创配乐与中文旁白自动压低（ducking）混音。</p>
+        <div class="links">
+          <a href="./frames/gta6.jpg" target="_blank">查看关键帧总览</a>
+          <code>--demo gta6</code>
+        </div>
+      </div>
+    </article>
+    <article>
+      <img class="preview" src="./gifs/anc.gif" alt="主动降噪原理演示">
+      <div class="body">
+        <div class="meta">anc · 15s · 30fps · DOM + SVG + 透明剖面素材</div>
+        <h2>主动降噪 · 原理演示</h2>
+        <p class="desc">工作室透明剖面渲染素材与代码精确驱动的同轴相消正弦波形融合，整机到内部麦克风、DSP、扬声器的连续推近拆解。</p>
+        <div class="links">
+          <a href="./frames/anc.jpg" target="_blank">查看关键帧总览</a>
+          <code>--demo anc</code>
+        </div>
+      </div>
+    </article>
   </section>
-</main>
-<script>
-for(const group of document.querySelectorAll('[data-compare]')){
-  const videos=[...group.querySelectorAll('video')];
-  const sync=group.querySelector('.sync');
-  const caption=group.querySelector('.caption');
-  const cues=[...group.closest('.case').querySelectorAll('.cue')].map(c=>({start:Number(c.dataset.start),end:Number(c.dataset.end),text:c.querySelector('span').textContent}));
-  const status=group.querySelector('.status');
-  let active=false,starting=false,loop=null;
-  const leader=()=>videos[0];
-  function updateCaption(v){
-    const text=cues.find(c=>v.currentTime>=c.start&&v.currentTime<c.end)?.text||'';
-    if(caption.textContent!==text)caption.textContent=text;
-  }
-  function reset(){
-    active=false;starting=false;clearInterval(loop);loop=null;
-    sync.textContent='同步三版';
-  }
-  async function start(){
-    if(starting)return;
-    if(active){videos.forEach(v=>v.pause());reset();return;}
-    try{
-      status.textContent='';
-      const t=Math.max(0,leader().currentTime);
-      if(videos.some(v=>!Number.isFinite(v.duration)))throw Error('视频尚未加载，请稍后重试。');
-      const point=t>=leader().duration-.12?0:t;
-      videos.forEach(v=>{v.currentTime=point;});starting=true;active=true;
-      await Promise.all(videos.map(v=>v.play()));
-      starting=false;sync.textContent='暂停三版';
-      loop=setInterval(()=>{
-        if(!active||videos.some(v=>v.seeking||v.readyState<2))return;
-        const primary=leader();
-        for(const v of videos){
-          if(v!==primary&&Math.abs(primary.currentTime-v.currentTime)>.18)v.currentTime=primary.currentTime;
-        }
-      },240);
-    }catch(err){
-      videos.forEach(v=>v.pause());reset();status.textContent=err.message;
-    }
-  }
-  sync.addEventListener('click',start);
-  for(const v of videos){
-    v.addEventListener('timeupdate',()=>{if(active?v===leader():!v.paused||v===leader())updateCaption(v);});
-    v.addEventListener('seeked',()=>{if(!active||v===leader())updateCaption(v);});
-    v.addEventListener('ended',()=>{if(active){videos.forEach(x=>x.pause());reset();}});
-    v.addEventListener('pause',()=>{if(active&&!starting){reset();videos.forEach(x=>x.pause());}});
-    v.addEventListener('play',()=>{if(!active&&!starting){updateCaption(v);videos.filter(x=>x!==v).forEach(x=>x.pause());}});
-  }
-  for(const button of group.querySelectorAll('[data-seek]')){
-    button.addEventListener('click',()=>{
-      if(videos.some(v=>!Number.isFinite(v.duration))){status.textContent='视频尚未加载，请稍后重试。';return;}
-      status.textContent='';
-      videos.forEach(v=>{v.currentTime=Number(button.dataset.seek);});
-    });
-  }
-}
-</script>
+</div>
 </body>
 </html>

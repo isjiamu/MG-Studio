@@ -35,7 +35,10 @@ else {
   let browser,ff,ffDone;const errors=[];
   try{
     run('ffmpeg',['-version']);run('ffprobe',['-version']);
-    browser=await chromium.launch({headless:true});
+    // gpu:true uses the machine's real GPU for WebGL (Three.js PBR, shaders). Default headless WebGL is a slow
+// software rasterizer. GPU output is deterministic per machine; re-run verify after changing machines.
+    const gpuArgs=process.platform==='darwin'?['--use-gl=angle','--use-angle=metal']:['--use-gl=angle'];
+    browser=await chromium.launch({headless:true,args:(cfg.gpu||opt.gpu)?[...gpuArgs,'--enable-webgl','--ignore-gpu-blocklist','--disable-background-timer-throttling']:[]});
     const context=await browser.newContext({viewport:{width:W,height:H},deviceScaleFactor:1});
     await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort('blockedbyclient'));
     async function page(){
@@ -47,35 +50,53 @@ else {
       return p;
     }
     const p=await page();
+    const capture=await p.evaluate(()=>window.MG.capture||'canvas');
+    // canvas: read the stage canvas pixels. dom: screenshot the stage element (HTML/SVG/CSS/WebGL).
+    async function grab(target){
+      if(capture==='dom'){
+        await target.evaluate(()=>Promise.all([...document.querySelectorAll('#stage img')].map(i=>i.decode().catch(()=>{throw Error(`Image failed: ${i.src}`);}))).then(()=>document.fonts.ready).then(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))));
+        return await target.locator('#stage').screenshot({type:'png',animations:'disabled',caret:'hide',scale:'css'});
+      }
+      return Buffer.from(await target.evaluate(()=>document.querySelector('#stage').toDataURL('image/png').split(',')[1]),'base64');
+    }
     async function frame(t,target=p){
-      const data=await target.evaluate(async t=>{
-        await window.MG.seek(t);
-        return {png:document.querySelector('#stage').toDataURL('image/png').split(',')[1],issues:window.MG.inspect?.()||[]};
-      },t);
-      if(data.issues.length)throw Error(`Layout at ${t.toFixed(3)}s: ${JSON.stringify(data.issues)}`);
+      const issues=await target.evaluate(async t=>{await window.MG.seek(t);return window.MG.inspect?.()||[];},t);
+      if(issues.length)throw Error(`Layout at ${t.toFixed(3)}s: ${JSON.stringify(issues)}`);
+      const png=await grab(target);
       if(errors.length)throw Error(errors.join('\n'));
-      return Buffer.from(data.png,'base64');
+      return png;
     }
     const hash=b=>createHash('sha256').update(b).digest('hex');
     if(mode==='verify'){
       const times=[0,...cfg.scenes.flatMap(s=>[s.from+1/fps,(s.from+s.to)/2,s.to-1/fps])];
-      const hashes=[];for(const t of times)hashes.push(hash(await frame(t)));
-      for(let i=times.length-1;i>=0;i--)if(hash(await frame(times[i]))!==hashes[i])throw Error(`Nondeterministic frame at ${times[i]}`);
+      const useGpu=Boolean(cfg.gpu||opt.gpu),gpuDeltas=[];
+      async function assertSame(refBuf,refHash,curBuf,label){
+        if(hash(curBuf)===refHash)return;
+        if(!useGpu)throw Error(label);
+        const a=await sharp(refBuf).raw().toBuffer(),b=await sharp(curBuf).raw().toBuffer();
+        let maxd=0,changed=0,sum=0;
+        for(let k=0;k<a.length;k++){const d=Math.abs(a[k]-b[k]);if(d){changed++;sum+=d;if(d>maxd)maxd=d;}}
+        if(maxd>2||sum/a.length>=0.005)throw Error(`${label} (GPU maxDiff=${maxd}, meanDiff=${(sum/a.length).toFixed(4)})`);
+        gpuDeltas.push({check:label,maxDiff:maxd,changedChannels:changed,totalChannels:a.length});
+      }
+      const frames=[],hashes=[];for(const t of times){const f=await frame(t);frames.push(useGpu?f:null);hashes.push(hash(f));}
+      for(let i=times.length-1;i>=0;i--)await assertSame(frames[i],hashes[i],await frame(times[i]),`Nondeterministic frame at ${times[i]}`);
       const shuffleSeed=74291,order=times.map((_,i)=>i);let shuffleState=shuffleSeed;
       for(let i=order.length-1;i>0;i--){
         shuffleState=(Math.imul(shuffleState,1664525)+1013904223)>>>0;
         const j=shuffleState%(i+1);[order[i],order[j]]=[order[j],order[i]];
       }
-      for(const i of order)if(hash(await frame(times[i]))!==hashes[i])throw Error(`Shuffled seek mismatch at ${times[i]} (seed ${shuffleSeed})`);
-      const p2=await page();for(let i=0;i<times.length;i+=3)if(hash(await frame(times[i],p2))!==hashes[i])throw Error(`Fresh-page mismatch at ${times[i]}`);
+      for(const i of order)await assertSame(frames[i],hashes[i],await frame(times[i]),`Shuffled seek mismatch at ${times[i]} (seed ${shuffleSeed})`);
+      const p2=await page();
+      for(let i=0;i<times.length;i+=3)await assertSame(frames[i],hashes[i],await frame(times[i],p2),`Fresh-page mismatch at ${times[i]}`);
       // Do not seek again during a hold: doing so can reset and hide timer-driven drift.
       const holds=[];
       for(const t of [0,cfg.duration/2,cfg.duration-1/fps]){
         const initial=hash(await frame(t,p2));let elapsed=0;
         for(const waitMs of [73,149,227]){
           await new Promise(resolve=>setTimeout(resolve,waitMs));elapsed+=waitMs;
-          const data=await p2.evaluate(()=>document.querySelector('#stage').toDataURL('image/png').split(',')[1]);
-          if(hash(Buffer.from(data,'base64'))!==initial)throw Error(`Paused frame drift at ${t}s after ${elapsed}ms without seek`);
+          const data=await grab(p2);
+          if(hash(data)!==initial)throw Error(`Paused frame drift at ${t}s after ${elapsed}ms without seek`);
           if(errors.length)throw Error(errors.join('\n'));
         }
         holds.push({t,totalWaitMs:elapsed,hash:initial});
@@ -87,7 +108,7 @@ else {
         const a=await sharp(await frame(0)).raw().toBuffer(),b=await sharp(await frame(cfg.duration-1/fps)).raw().toBuffer();
         let sum=0;for(let i=0;i<a.length;i++)sum+=Math.abs(a[i]-b[i]);loop={endpointMeanAbsoluteDifference:sum/a.length,note:'Endpoint similarity only; velocity and audio seam require playback review.'};
       }
-      json(path.join(outDir,'verify.json'),{passed:true,layoutCoverage:await p.evaluate(()=>window.MG.layoutCoverage||'unspecified'),engine:'Chromium/Canvas',times,hashes,reverseOrder:true,randomOrder:{seed:shuffleSeed,indices:order,times:order.map(i=>times[i])},pausedHolds:holds,freshPage:true,boundaryFrames:true,loop});
+      json(path.join(outDir,'verify.json'),{passed:true,layoutCoverage:await p.evaluate(()=>window.MG.layoutCoverage||'unspecified'),engine:`Chromium/${capture}`,times,hashes,reverseOrder:true,randomOrder:{seed:shuffleSeed,indices:order,times:order.map(i=>times[i])},pausedHolds:holds,freshPage:true,gpuDeltas:useGpu?gpuDeltas:undefined,boundaryFrames:true,loop});
       console.log('Deterministic seek + shuffled order + paused holds + fresh page + declared bounds passed (see layoutCoverage)');
     }else if(mode==='stills'){
       const times=opt.times?String(opt.times).split(',').map(Number):cfg.scenes.map(s=>(s.from+s.to)/2);

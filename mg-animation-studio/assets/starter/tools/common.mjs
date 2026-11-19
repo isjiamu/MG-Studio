@@ -12,7 +12,7 @@ export function config(){
   const c=JSON.parse(fs.readFileSync('film.json','utf8'));
   const audioMode=c.audio?.mode??'sound';
   if(!['sound','silent'].includes(audioMode))throw Error('Unknown audio.mode; expected sound or silent');
-  if(audioMode==='silent'&&(c.cues?.length||c.audio.music||c.audio.voice))throw Error('Silent intent conflicts with audio events/assets');
+  if(audioMode==='silent'&&(c.cues?.length||c.audio.music||c.audio.voice||c.audio.script))throw Error('Silent intent conflicts with audio events/assets');
   for(const k of ['width','height','fps','duration','bpm'])if(!Number.isFinite(c[k])||c[k]<=0)throw Error(`Invalid ${k}`);
   if(c.width%2||c.height%2)throw Error('H.264 dimensions must be even');
   if(Math.abs(c.duration*c.fps-Math.round(c.duration*c.fps))>1e-6)throw Error('Duration must contain an integer frame count');
@@ -20,6 +20,9 @@ export function config(){
   for(const s of c.scenes){if(s.from!==end||!(s.to>s.from))throw Error(`Gap/overlap at ${s.id}`);end=s.to;}
   if(end!==c.duration)throw Error('Scene coverage must exactly equal duration');
   for(const cue of c.cues||[])if(cue.t<0||cue.t>=c.duration)throw Error('Cue outside timeline');
+  if(c.route?.emphasis&&!['aesthetic','balanced','precise'].includes(c.route.emphasis))throw Error('route.emphasis must be aesthetic, balanced or precise');
+  if(c.capture&&!['canvas','dom'].includes(c.capture))throw Error('capture must be canvas or dom');
+  for(const f of c.fonts||[])if(!f.family||!(f.src||f.local))throw Error('fonts[] entries need family and src or local');
   if(c.dataset)validateDataset(c.dataset);
   if(c.graph)validateGraph(c.graph);
   validateInsets(c.safeInsets);

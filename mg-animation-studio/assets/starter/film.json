@@ -1,29 +1,17 @@
 {
-  "title": "折光 / REFRACT — 创意成为作品",
-  "demo": "product",
-  "duration": 24,
+  "title": "新片创作入口",
+  "draft": true,
+  "route": {"emphasis": "balanced", "vision": "unknown"},
+  "capture": "canvas",
+  "fonts": [],
+  "duration": 20,
   "fps": 30,
   "width": 1920,
   "height": 1080,
-  "bpm": 120,
-  "beatOffset": 0,
-  "loop": false,
+  "bpm": 108,
   "seed": 42,
-  "audio": { "integratedLufs": -16, "truePeakDb": -1.5 },
-  "scenes": [
-    { "id": "spark", "from": 0, "to": 4, "purpose": "创意从一点出现" },
-    { "id": "organize", "from": 4, "to": 8, "purpose": "收集碎片，组成清晰结构" },
-    { "id": "compose", "from": 8, "to": 12, "purpose": "结构成为可编辑作品" },
-    { "id": "flow", "from": 12, "to": 16, "purpose": "展示同一对象流转的连续性" },
-    { "id": "formats", "from": 16, "to": 20, "purpose": "内容重排适应三种画幅" },
-    { "id": "resolve", "from": 20, "to": 24, "purpose": "品牌记忆与结束留白" }
-  ],
-  "cues": [
-    { "t": 0.25, "type": "chime" }, { "t": 2, "type": "click" },
-    { "t": 4, "type": "whoosh" }, { "t": 6, "type": "click" },
-    { "t": 8, "type": "impact" }, { "t": 10, "type": "click" },
-    { "t": 12, "type": "whoosh" }, { "t": 14, "type": "chime" },
-    { "t": 16, "type": "impact" }, { "t": 18, "type": "click" },
-    { "t": 20, "type": "whoosh" }, { "t": 22, "type": "chime" }
-  ]
+  "loop": false,
+  "audio": {"integratedLufs": -16, "truePeakDb": -1.5},
+  "scenes": [{"id": "custom", "from": 0, "to": 20, "purpose": "根据本次 brief 重写内容和场景区间"}],
+  "cues": []
 }

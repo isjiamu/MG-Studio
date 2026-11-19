@@ -1,44 +1,73 @@
 #!/usr/bin/env python3
-"""Create an isolated film; never overwrite an existing directory."""
-import argparse, pathlib, shutil, json
-p=argparse.ArgumentParser()
-p.add_argument("destination")
-p.add_argument("--demo",choices=["blank","product","explainer","kinetic","story","industry"],default="blank",help="blank starts a new brief; named demos reproduce sample films")
-a=p.parse_args();target=pathlib.Path(a.destination).expanduser().resolve()
-if target.exists():p.error(f"Destination already exists: {target}")
-source=pathlib.Path(__file__).resolve().parents[1]/"assets"/"starter"
-shutil.copytree(source,target,ignore=shutil.ignore_patterns("node_modules","out","__pycache__"))
-if a.demo=="blank":
- blank=source.parent/"blank"
- shutil.copy2(blank/"film.json",target/"film.json")
- shutil.copy2(blank/"film.js",target/"src"/"film.js")
-if a.demo=="explainer":
- import json
- cfg=json.loads((target/"film.json").read_text());cfg.update(title="一束光，为什么会转弯？",demo="explainer")
- purposes=["提出折射问题","光进入另一种介质","传播速度变化","波前方向改变","法线与角度关系","解释与回顾"]
- for s,t in zip(cfg["scenes"],purposes):s["purpose"]=t
- (target/"film.json").write_text(json.dumps(cfg,ensure_ascii=False,indent=2)+"\n")
-if a.demo=="kinetic":
- import json
- cfg=json.loads((target/"film.json").read_text())
- cfg.update(title="创意 × 代码 / MAKE IT MOVE",demo="kinetic",duration=16)
- cfg["scenes"]=[{"id":name,"from":i*4,"to":(i+1)*4} for i,name in enumerate(["form","rhythm","morph","resolve"])]
- cfg["cues"]=[x for x in cfg["cues"] if x["t"]<16]
- (target/"film.json").write_text(json.dumps(cfg,ensure_ascii=False,indent=2)+"\n")
-if a.demo=="story":
- cfg=json.loads((target/"presets"/"story.json").read_text())
- (target/"film.json").write_text(json.dumps(cfg,ensure_ascii=False,indent=2)+"\n")
-if a.demo=="industry":
- cfg=json.loads((target/"film.json").read_text())
- cfg.update(demo="industry",duration=24,fps=30,title="FARO / 微光 — 产品、架构与数据",width=1920,height=1080)
- cfg["safeInsets"]={"top":.04,"right":.04,"bottom":.04,"left":.04}
- cfg["dataset"]={"title":"每月处理量","unit":"万次","source":"内置演示数据","asOf":"2026-06-30","illustrative":True,"domain":[0,100],"rows":[{"label":f"{i+1}月","value":v} for i,v in enumerate([28,42,38,64,76,93])]}
- cfg["graph"]={"nodes":[{"id":f"n{i}","label":s} for i,s in enumerate(["采集","消息队列","处理引擎","指标服务","可视化"])],"edges":[{"from":f"n{i}","to":f"n{i+1}"} for i in range(4)]}
- purposes=["产品材质特写","分层细节","技术架构流向","动态图表与数字","变化趋势","品牌收束"]
- cfg["scenes"]=[{"id":f"shot-{i+1}","from":i*4,"to":(i+1)*4,"purpose":s} for i,s in enumerate(purposes)]
- (target/"film.json").write_text(json.dumps(cfg,ensure_ascii=False,indent=2)+"\n")
+"""Create an isolated film project; never overwrite an existing directory.
+
+Default creates an empty creative entry so every new film starts from its own
+world and visual language. Use --demo to inspect one of the curated high-craft
+showcases covering different visual worlds and technical stacks.
+"""
+import argparse, json, pathlib, shutil
+
+DEMOS = {
+    "industrial": "LESS, BUT BETTER · 少，却更好 — 纯 Canvas 2D 精密工业材质、机械阻尼与 ASMR 原创配乐 (22s / 60fps)",
+    "atelier":    "MATTER OF LIGHT · 元素之形 — Three.js 实时 PBR/GLSL 雕塑 × 瑞士排印三明治纵深与电子配乐 (28s / 60fps / GPU)",
+    "anc":        "主动降噪 · 原理演示 — 实拍/渲染剖面素材 × 精确声学相消波形 (15s / 30fps / DOM+SVG)",
+    "gta6":       "GTA VI · 阳光之下 — 60s 预告片级多图分层叙事、120 BPM 合成器配乐与中文旁白压低混音 (60s / 30fps / Canvas+layers)",
+}
+
+p = argparse.ArgumentParser()
+p.add_argument("destination", nargs="?", help="New output project directory (must not exist)")
+p.add_argument("--capture", choices=["canvas", "dom"], default="canvas",
+               help="For blank projects: canvas (<canvas id=stage>) or dom (<div id=stage> HTML/SVG/CSS/WebGL)")
+p.add_argument("--demo", choices=list(DEMOS.keys()), default=None,
+               help="Optional curated high-craft showcase to initialize")
+p.add_argument("--list-demos", action="store_true", help="List available high-craft demos and exit")
+a = p.parse_args()
+
+if a.list_demos:
+    for k, v in DEMOS.items():
+        print(f"{k:12s}  {v}")
+    raise SystemExit(0)
+
+if not a.destination:
+    p.error("destination is required (or pass --list-demos)")
+
+target = pathlib.Path(a.destination).expanduser().resolve()
+if target.exists():
+    p.error(f"Destination already exists: {target}")
+
+skill_root = pathlib.Path(__file__).resolve().parents[1]
+starter = skill_root / "assets" / "starter"
+shutil.copytree(starter, target, ignore=shutil.ignore_patterns("node_modules", "out", "__pycache__", ".DS_Store"))
+
+if a.demo:
+    demo_dir = skill_root / "assets" / "demos" / a.demo
+    if not demo_dir.exists():
+        p.error(f"Demo not found: {demo_dir}")
+    shutil.copytree(demo_dir, target, dirs_exist_ok=True, ignore=shutil.ignore_patterns("node_modules", "out", "__pycache__", ".DS_Store"))
+    if a.demo == "atelier":
+        pkg_path = target / "package.json"
+        pkg = json.loads(pkg_path.read_text())
+        pkg.setdefault("dependencies", {})["three"] = "^0.187.0"
+        pkg_path.write_text(json.dumps(pkg, ensure_ascii=False, indent=2) + "\n")
+        lock = target / "package-lock.json"
+        if lock.exists():
+            lock.unlink()
+else:
+    if a.capture == "dom":
+        cfg_path = target / "film.json"
+        cfg = json.loads(cfg_path.read_text())
+        cfg["capture"] = "dom"
+        cfg_path.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n")
+
 print(target)
-print("Next: npm ci (if lockfile exists), otherwise npm install; npx playwright install chromium")
-if a.demo=="blank":
- print("Write the current brief and storyboard; replace src/film.js and film.json. Inspect frames, then set draft=false.")
-print("Then: npm run score; npm run verify; npm run stills; npm run render; npm run check")
+if a.demo == "atelier":
+    print("Next: npm install && npx playwright install chromium")
+else:
+    print("Next: npm ci && npx playwright install chromium")
+if a.demo:
+    cfg = json.loads((target / "film.json").read_text())
+    score_step = "npm run score && " if cfg.get("audio", {}).get("mode", "sound") != "silent" else ""
+    print(f"Then: {score_step}npm run verify && npm run stills && npm run render && npm run check")
+else:
+    print("Then: write BRIEF.md + STORYBOARD.md, craft src/film.js and film.json,")
+    print("      npm run stills -> visually inspect -> set draft=false -> npm run render && npm run check")

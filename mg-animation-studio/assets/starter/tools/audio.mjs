@@ -13,7 +13,15 @@ function wav(file,L,R){
 }
 export function score(c){
   if(c.audio?.mode==='silent')throw Error('Explicit silent project: score generation is not part of this deliverable');
-  if(c.audio.style==='felt'){run('python3',['tools/story_score.py']);console.log('Original felt score: out/score.wav');return;}
+  if(c.audio?.script){
+    const script=path.resolve(c.audio.script),root=fs.realpathSync('.');
+    if(!script.startsWith(root+path.sep))throw Error('audio.script must live inside the project');
+    fs.mkdirSync('out',{recursive:true});
+    run('python3',[script]);
+    if(!fs.existsSync('out/score.wav'))throw Error('audio.script did not produce out/score.wav');
+    console.log(`Custom score (${c.audio.script}): out/score.wav`);
+    return;
+  }
   fs.mkdirSync('out',{recursive:true});
   const n=Math.round(c.duration*SR),L=new Float64Array(n),R=new Float64Array(n),beat=60/c.bpm;
   let seed=c.seed||42;const noise=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2147483648-1;};
@@ -88,7 +96,7 @@ export function mixSettings(c,opt={},hasVoice=!!opt.voice){
 }
 export function mix(c,video,dest,opt={}){
   if(c.audio?.mode==='silent')throw Error('Explicit silent project: mixing an audio stream is not allowed');
-  const music=path.resolve(opt.music||'out/score.wav'),voice=opt.voice&&path.resolve(opt.voice);
+  const music=path.resolve(opt.music||c.audio?.music||'out/score.wav'),voice=(opt.voice||c.audio?.voice)&&path.resolve(opt.voice||c.audio?.voice);
   const settings=mixSettings(c,opt,!!voice),d=settings.ducking;
   if(!fs.existsSync(music))throw Error('No music. Run npm run score or pass --music FILE');
   const duration=Number(probe(music).format.duration);

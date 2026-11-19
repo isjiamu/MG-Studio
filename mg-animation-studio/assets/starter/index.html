@@ -7,28 +7,62 @@
 @font-face{font-family:StudioSans;src:url('./assets/NotoSansSC.ttf') format('truetype');font-weight:100 900;font-display:block}
 *{box-sizing:border-box}body{margin:0;background:#141821;color:#fff;font:14px system-ui}
 main{min-height:100vh;display:grid;place-content:center;gap:18px;padding:28px}
-canvas{display:block;max-width:92vw;max-height:80vh;width:auto;height:auto;box-shadow:0 16px 60px #0006}
+#frame{position:relative;box-shadow:0 16px 60px #0006;overflow:hidden}
+canvas#stage{display:block;max-width:92vw;max-height:80vh;width:auto;height:auto}
+div#stage{position:absolute;left:0;top:0;overflow:hidden;transform-origin:0 0;font-family:StudioSans}
 nav{display:flex;gap:16px;align-items:center}input{flex:1;accent-color:#b7ff6b}
 button{background:#b7ff6b;color:#132028;border:0;border-radius:24px;padding:10px 22px;cursor:pointer}
-body.render main{padding:0;display:block;min-height:0}body.render canvas{max-width:none;max-height:none;box-shadow:none}body.render nav{display:none}
+body.render main{padding:0;display:block;min-height:0}body.render #frame{box-shadow:none}body.render canvas#stage{max-width:none;max-height:none}body.render nav{display:none}
+/* Render mode: nothing may move unless seek(t) moves it. */
+body.render *,body.render *::before,body.render *::after{animation:none!important;transition:none!important;caret-color:transparent!important}
 </style>
-<main><canvas id="stage"></canvas><nav><button id="play">播放</button><input id="time" aria-label="播放进度" type="range" min="0" step="0.01"><span id="readout"></span></nav></main>
+<main><div id="frame"></div><nav><button id="play">播放</button><input id="time" aria-label="播放进度" type="range" min="0" step="0.01"><span id="readout"></span></nav></main>
+<!-- Bare specifiers for optional local packages (npm i three). Unused entries cost nothing. -->
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
 <script type="module">
 import {createFilm} from './src/film.js';
 const cfg=await fetch('./film.json').then(r=>r.json());
 const q=new URLSearchParams(location.search);
 const size=(q.get('size')||`${cfg.width}x${cfg.height}`).split('x').map(Number);
-const stage=document.querySelector('canvas');[stage.width,stage.height]=size;
 const render=q.has('render');if(render)document.body.classList.add('render');
-const fontSample='中文愿望光0123456789'+cfg.title;
-for(const weight of [400,500,600,700,800,900]){
-  const faces=await document.fonts.load(`${weight} 64px StudioSans`,fontSample);
-  if(!faces.some(f=>f.family.replace(/[\"']/g,'')==='StudioSans'&&f.status==='loaded'))throw Error(`StudioSans ${weight} missing; fallback is not accepted`);
+const capture=cfg.capture||'canvas';
+if(!['canvas','dom'].includes(capture))throw Error(`Unknown capture mode: ${capture}`);
+const frameEl=document.querySelector('#frame');
+let stage;
+if(capture==='canvas'){
+  stage=document.createElement('canvas');stage.id='stage';[stage.width,stage.height]=size;frameEl.append(stage);
+}else{
+  stage=document.createElement('div');stage.id='stage';stage.style.width=size[0]+'px';stage.style.height=size[1]+'px';frameEl.append(stage);
+  const fit=()=>{const s=render?1:Math.min(1,innerWidth*.92/size[0],innerHeight*.8/size[1]);stage.style.transform=`scale(${s})`;frameEl.style.width=size[0]*s+'px';frameEl.style.height=size[1]*s+'px';};
+  fit();if(!render)addEventListener('resize',fit);
+}
+// Fonts: the bundled StudioSans plus any project-local families declared in film.json "fonts".
+// Every declared face must really load; a silent system fallback is a failure, not a pass.
+const fontSample='中文愿望光0123456789'+(cfg.title||'');
+for(const f of cfg.fonts||[]){
+  if(!f.family||!(f.src||f.local))throw Error('fonts[] entries need family and src (project file) or local (installed font name)');
+  if(f.local){
+    // Installed (system) font used by its family name. Proven present by metric difference against two fallbacks.
+    const m=document.createElement('canvas').getContext('2d'),probe='Hamburgefonstiv 0123 中文字形测试';
+    const differs=['monospace','serif'].every(fb=>{m.font=`64px ${fb}`;const a=m.measureText(probe).width;m.font=`64px "${f.family}", ${fb}`;return Math.abs(m.measureText(probe).width-a)>0.5;});
+    if(!differs)throw Error(`Installed font "${f.family}" not found on this machine; fallback is not accepted`);
+    continue;
+  }
+  const url=new URL(f.src,document.baseURI);
+  if(url.protocol!=='data:'&&url.origin!==location.origin)throw Error(`Font ${f.family} must be a project-local file`);
+  const face=new FontFace(f.family,`url(${url.href})`,{weight:f.weight||'100 900',style:f.style||'normal'});
+  try{await face.load();}catch(e){throw Error(`Font ${f.family} failed to load from ${f.src}`);}
+  document.fonts.add(face);
+}
+const families=[['StudioSans',[400,500,600,700,800,900]],...(cfg.fonts||[]).filter(f=>!f.local).map(f=>[f.family,f.check||[400]])];
+for(const [family,weights] of families)for(const weight of weights){
+  const ok=(await document.fonts.load(`${weight} 64px "${family}"`,fontSample)).some(x=>x.family.replace(/["']/g,'')===family&&x.status==='loaded');
+  if(!ok)throw Error(`${family} ${weight} missing; fallback is not accepted`);
 }
 await document.fonts.ready;
 const film=await createFilm(stage,cfg);
-window.MG={...cfg,width:size[0],height:size[1],seek:film.seek,inspect:film.inspect,trace:film.trace,layoutCoverage:film.layoutCoverage||(cfg.demo==='kinetic'?'manual-only':'instrumented text bounds only'),ready:true};
-film.seek(0);
+window.MG={...cfg,capture,width:size[0],height:size[1],seek:film.seek,inspect:film.inspect,trace:film.trace,layoutCoverage:film.layoutCoverage||'instrumented text bounds only',ready:true};
+await film.seek(0);
 if(!render){
   const slider=document.querySelector('#time'),btn=document.querySelector('#play'),readout=document.querySelector('#readout');
   const silent=cfg.audio?.mode==='silent',audio=silent?null:new Audio('./out/score.wav');

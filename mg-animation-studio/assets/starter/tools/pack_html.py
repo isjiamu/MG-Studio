@@ -37,6 +37,13 @@ for name,source in config.get('layers',{}).items():
  if not image.is_relative_to(root/'assets') or image.suffix.lower() not in image_mimes:
   raise ValueError(f'Unsupported project image: {name}')
  config['layers'][name]=f"data:{image_mimes[image.suffix.lower()]};base64,"+base64.b64encode(image.read_bytes()).decode()
+font_mimes={'.ttf':'font/ttf','.otf':'font/otf','.woff2':'font/woff2','.woff':'font/woff'}
+for f in config.get('fonts',[]):
+ if 'src' not in f:print(f"Note: {f.get('family')} uses an installed font; the standalone HTML needs it on the viewing machine.");continue
+ src=(root/f['src']).resolve()
+ if not src.is_relative_to(root) or src.suffix.lower() not in font_mimes:raise ValueError(f"Unsupported project font: {f.get('family')}")
+ f['src']=f"data:{font_mimes[src.suffix.lower()]};base64,"+base64.b64encode(src.read_bytes()).decode()
+if config.get('capture','canvas')!='canvas':print('Note: DOM-capture projects must reference images as data URLs or keep them alongside the HTML.')
 mode=config.get("audio",{}).get("mode","sound")
 if mode not in ("sound","silent"):raise ValueError("Unknown audio.mode")
 if mode=="silent" and args.audio:raise ValueError("Explicit silent preview cannot embed audio")

@@ -1,4 +1,4 @@
 interface:
   display_name: "MG 动画工作室"
-  short_description: "从一个想法制作产品、品牌、数据、架构、巨幕或手绘故事动画"
-  default_prompt: "用 $mg-animation-studio 制作一支有分层美术、逐步讲解和同步音轨的 MG 动画，实际渲染并交付视频与源文件。"
+  short_description: "以宏观美学经验与开放技术栈制作高完成度 MG 动画（含 4 支高水准可运行范例）"
+  default_prompt: "用 $mg-animation-studio 制作一支高审美完成度的 MG 动画：先定路由与题材视觉世界，做全分辨率风格帧审片，再实际渲染并交付视频与源文件。"

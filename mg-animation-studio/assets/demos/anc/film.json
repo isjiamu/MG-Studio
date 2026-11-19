@@ -1,0 +1,24 @@
+{
+  "title": "主动降噪 · 原理演示",
+  "draft": false,
+  "route": {"emphasis": "balanced", "vision": "yes"},
+  "capture": "dom",
+  "fonts": [],
+  "duration": 15,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 96,
+  "seed": 42,
+  "loop": false,
+  "audio": {"mode": "silent"},
+  "scenes": [
+    {"id": "noise", "from": 0, "to": 3, "purpose": "持续低频噪声接近耳机整体"},
+    {"id": "cutaway", "from": 3, "to": 5.5, "purpose": "打开耳罩剖面，进入内部结构"},
+    {"id": "mic", "from": 5.5, "to": 8, "purpose": "外部麦克风提前采样环境噪声"},
+    {"id": "dsp", "from": 8, "to": 10.5, "purpose": "DSP 生成 180 度反相信号"},
+    {"id": "cancel", "from": 10.5, "to": 13, "purpose": "扬声器发出反相声波，耳边相消"},
+    {"id": "result", "from": 13, "to": 15, "purpose": "拉回整体，保留少量残余波"}
+  ],
+  "cues": []
+}

@@ -1,0 +1,55 @@
+{
+  "title": "LESS, BUT BETTER · 少，却更好",
+  "draft": false,
+  "route": {
+    "emphasis": "aesthetic",
+    "vision": "yes"
+  },
+  "capture": "canvas",
+  "fonts": [],
+  "duration": 22,
+  "fps": 60,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 120,
+  "seed": 1976,
+  "loop": false,
+  "audio": {
+    "script": "audio/compose.py",
+    "integratedLufs": -16,
+    "truePeakDb": -1.5
+  },
+  "scenes": [
+    {
+      "id": "reduction",
+      "from": 0,
+      "to": 3.8,
+      "purpose": "精密铝旋钮压清视觉噪音，回归秩序"
+    },
+    {
+      "id": "honest",
+      "from": 3.8,
+      "to": 7.8,
+      "purpose": "325 孔声学面板展现诚实材质与机械波纹"
+    },
+    {
+      "id": "precise",
+      "from": 7.8,
+      "to": 12.4,
+      "purpose": "阳极氧化双旋钮控台、四色按键、示波器与 VU 表"
+    },
+    {
+      "id": "timeless",
+      "from": 12.4,
+      "to": 16.8,
+      "purpose": "经典石英表盘与机械擒纵律动"
+    },
+    {
+      "id": "resolve",
+      "from": 16.8,
+      "to": 22,
+      "purpose": "三色信号点落位与 LESS, BUT BETTER 收束"
+    }
+  ],
+  "cues": []
+}
